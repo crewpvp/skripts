@@ -1,0 +1,46 @@
+on load:
+	load yaml "secrets.yml" as "database"
+	set {-database::password} to yaml value "password" from "database"
+	set {-database::user} to yaml value "user" from "database"
+	set {-database::database} to yaml value "database" from "database"
+	set {-database::address} to yaml value "address" from "database"
+	set {-database::port} to yaml value "port" from "database"
+	set {-database::connection} to the database "mysql://%{-database::address}%:%{-database::port}%/%{-database::database}%?user=%{-database::user}%&password=%{-database::password}%&useSSL=false"
+	unload yaml "database"
+
+# get current database connection	
+expression database:
+	return type: datasource
+	get:
+		return {-database::connection}
+
+# get all table names
+expression all tables:
+	return type: texts
+	get:
+		sync execute "show tables" in database and store the result in {_d::*}
+		return {_d::Tables_in_%{-database::database}%::*}
+
+# check if table exists
+condition table %text% ([is]|does)[(1¦(n't| not))] exist[s]:
+	check:
+		negate the condition if parse mark = 1
+		continue if all tables contains expr-1
+
+# get names of all columns of table
+expression [all] column[s] of [table] %text%:
+	get:
+		sync execute "show columns from %expr-1%" in database and store the result in {_d::*}
+		return {_d::Field::*}
+
+# check if column is exists in table
+condition column[s] %texts% (on|at|in) [table] %text% ([is]|does)[(1¦(n't| not))] exist[s]:
+	check:
+		negate the condition if parse mark = 1
+		continue if columns of table expr-2 contains expr-1
+
+# delete table
+effect delete table %text%:
+	trigger:
+		execute "drop table %expr-1%" in database if all tables contains expr-1
+	

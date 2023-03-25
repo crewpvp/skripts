@@ -1,0 +1,25 @@
+import:
+	org.bukkit.event.player.PlayerFishEvent$State
+	org.bukkit.entity.EntityType
+
+on fish:
+	event.getState() is State.CAUGHT_FISH
+	set {_ent} to event.getCaught()
+	set {_item} to {_ent}.getItemStack()
+	if {_item} is cod:
+		set {_s} to EntityType.COD
+	else if {_item} is pufferfish:
+		set {_s} to EntityType.PUFFERFISH
+	else if {_item} is tropical fish:
+		set {_s} to EntityType.TROPICAL_FISH
+	else if {_item} is salmon:
+		set {_s} to EntityType.SALMON
+	else:
+		stop
+	{_ent}.remove()
+	set {_loc} to location of event.getHook()
+	set {_y} to 8*(difference between (y coord of {_loc}) and (y coord of player))/30
+	set {_ent} to player.getWorld().spawnEntity({_loc}, {_s})
+	set {_vec} to (vector between {_ent} and player) // (vector 8,3+{_y},8)
+	push {_ent} {_vec}
+		

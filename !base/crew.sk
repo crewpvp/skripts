@@ -1,0 +1,169 @@
+options:
+	geo-host: https://api.ipgeolocation.io
+	timezone_offset: 0
+
+on load:
+	load yaml "secrets.yml" as "database"
+	set {-ipgeolocation.io::token} to yaml value "ipgeolocation-io-token" from "database"
+	unload yaml "database"
+
+expression timezone offset:
+	return type: number
+	get:
+		return {@timezone_offset}
+
+import:
+	net.minecraft.nbt.GameProfileSerializer
+	net.minecraft.nbt.NBTTagCompound
+	org.apache.commons.lang.StringEscapeUtils
+	net.minecraft.nbt.MojangsonParser
+	net.minecraft.util.datafix.DataFixTypes
+
+	java.io.BufferedReader
+	java.io.ByteArrayInputStream
+	java.io.ByteArrayOutputStream
+	java.io.IOException
+	java.io.InputStreamReader
+	java.util.zip.GZIPInputStream
+	java.util.zip.GZIPOutputStream
+	java.util.Base64
+	java.lang.StringBuilder
+	org.apache.commons.lang3.ArrayUtils
+	java.lang.Byte
+	org.bukkit.GameMode as BGameMode
+
+function gzipCompress(string: text) :: text:
+	set {_obj} to new ByteArrayOutputStream()
+	set {_gzip} to new GZIPOutputStream({_obj})
+	{_gzip}.write({_string}.getBytes("UTF-8"))
+	{_gzip}.flush()
+	{_gzip}.close()
+	return Base64.getEncoder().encodeToString({_obj}.toByteArray())
+function gzipDecompress(compressed: text) :: text:
+	set {_compressed} to Base64.getDecoder().decode({_compressed})
+	set {_outStr} to new StringBuilder()
+	set {_gis} to new GZIPInputStream(new ByteArrayInputStream({_compressed}))
+	set {_bufferedReader} to new BufferedReader(new InputStreamReader({_gis}, "UTF-8"))
+	set {_line} to {_bufferedReader}.readLine()
+	while {_line} is set:
+		{_outStr}.append({_line})
+		set {_line} to {_bufferedReader}.readLine()
+	return {_outStr}.toString()
+
+function savePlayerData(p:player):
+	set {_server} to server's name
+	set {_uuid} to uuid of {_p}
+	
+	set {_advancementsJson} to gzipCompress({_p}.getJsonAdvancements())
+	set {_statisticsJson} to gzipCompress({_p}.getJsonStats())
+	set {_playerDataNBT} to gzipCompress({_p}.getNBTStringPlayerData())
+	
+	execute "INSERT INTO mc_playerdata VALUES('%{_uuid}%','%{_server}%','%{_playerDataNBT}%','%{_advancementsJson}%') ON DUPLICATE KEY UPDATE playerdata='%{_playerDataNBT}%', advancements='%{_advancementsJson}%'" in database
+	execute "INSERT INTO mc_playerstats VALUES('%{_uuid}%','%{_statisticsJson}%') ON DUPLICATE KEY UPDATE stats='%{_statisticsJson}%'" in database
+
+import:
+	net.minecraft.network.protocol.game.PacketPlayOutPosition
+	java.util.Set
+	java.util.UUID
+	org.bukkit.Bukkit
+	org.bukkit.Location as BukkitLocation
+function loadPlayerData(p:player):
+	set {_server} to server's name
+	set {_uuid} to uuid of {_p}
+	execute "SELECT d.playerdata,s.stats,d.advancements FROM mc_playerdata AS d JOIN mc_playerstats AS s ON d.id=s.id WHERE d.id='%{_uuid}%' AND d.server='%{_server}%'" in database and store the result in {_data::*}
+	if {_data::playerdata::1} and {_data::stats::1} and {_data::advancements::1} is set:
+		set {_data::playerdata::1} to gzipDecompress({_data::playerdata::1})
+		set {_data::stats::1} to gzipDecompress({_data::stats::1})
+		set {_data::advancements::1} to gzipDecompress({_data::advancements::1})
+		{_p}.setPlayerDataFromNBT(MojangsonParser.a({_data::playerdata::1}))
+		{_p}.setAdvancementsFromJson({_data::advancements::1})
+		{_p}.setStatsFromJson({_data::stats::1})
+	else:
+		set {_p}'s gamemode to survival
+		teleport {_p} to spawn point of main world
+
+custom event "authorize":
+	pattern: authorize
+	event-values: player
+
+custom event "unauthorize":
+	pattern: unauthorize
+	event-values: player
+
+function authorize(p:player, updateGeoData:boolean=false):
+	set {_ip} to ip of {_p}
+	set {_uuid} to uuid of {_p}
+	if {_updateGeoData} is false:
+		execute "UPDATE mc_accounts SET nick='%name of {_p}%', ip = '%{_ip}%', last_server='%server's name%' WHERE id='%{_uuid}%'" in database
+	else:
+		set {_url} to "{@geo-host}/timezone?apiKey={-ipgeolocation.io::token}&ip=%{_ip}%"
+		async request "GET" to url {_url} and store the body in {_data} and code in {_code}
+		if {_code} is between 200 and 299:
+			set {_country} to {_data}.replaceAll(".*""country_name"":""","").replaceAll(""".*","").replaceAll("'","")
+			set {_city} to {_data}.replaceAll(".*""city"":""","").replaceAll(""".*","").replaceAll("'","")
+			set {_timezone} to {@timezone_offset}+({_data}.replaceAll(".*""timezone_offset"":","").replaceAll(",.*","") parsed as number)
+		else:
+			set {_country} to "Unknown"
+			set {_city} to "Unknown"
+			set {_timezone} to 0
+		execute "UPDATE mc_accounts SET nick='%name of {_p}%', ip = '%{_ip}%', last_server='%server's name%', city='%{_city}%', country='%{_country}%', timezone=%{_timezone}% WHERE id='%uuid of {_p}%'" in database
+	set {-p::%{_uuid}%::authorized} to true
+	loadPlayerData({_p})
+	set {_l::player} to {_p}
+	call custom event "authorize" with event-values {_l::*}
+
+
+function unauthorize(p:player):
+	savePlayerData({_p})
+	set {_l::player} to {_p}
+	call custom event "unauthorize" with event-values {_l::*}
+	delete {-p::%uuid of {_p}%::*}
+	teleport {_p} to spawn point of main world
+	set {_p}'s gamemode to spectator
+
+on connect:
+	execute "SELECT id,ip FROM mc_accounts WHERE id = '%uuid of player%'" in database and store the result in {_data::*}
+	if {_data::id::1} is not set:
+		set player's gamemode to spectator
+		send {-messages::register_in_discord} to player
+		stop
+	if {_data::ip::1} is player's ip:
+		authorize(player)
+		stop
+	send {-messages::authorize_join_in_discord} to player
+	set player's gamemode to spectator
+
+on disconnect with priority HIGHEST:
+	if {-p::%uuid of player%::authorized} is true:
+		unauthorize(player)
+
+on world saving with priority LOWEST:
+	loop all players:
+		if {-p::%uuid of loop-value%::authorized} is true:
+			savePlayerData(loop-value)
+
+on signal "authorize":
+	if {-p::%event-signal-value%::authorized} is true:
+		stop
+	loop all players:
+		if uuid of loop-value is event-signal-value:
+			authorize(loop-value,true)
+
+on signal "exception":
+	if {-p::%event-signal-value%::authorized} is not set:
+		stop
+	loop all players:
+		if uuid of loop-value is event-signal-value:
+			unauthorize(loop-value)
+
+on signal "exception_end":
+	if {-p::%event-signal-value%::authorized} is true:
+		stop
+	loop all players:
+		if uuid of loop-value is event-signal-value:
+			authorize(loop-value,true)	
+
+#on signal "premium_get":
+
+
+#on signal "premium_end":
