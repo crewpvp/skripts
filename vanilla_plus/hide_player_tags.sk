@@ -1,0 +1,21 @@
+import:
+	org.bukkit.scoreboard.ScoreboardManager
+	org.bukkit.scoreboard.NameTagVisibility
+	org.bukkit.Bukkit
+on load:
+	set {-mainscoreboard} to Bukkit.getScoreboardManager().getMainScoreboard()
+	loop all players:
+		set {_team} to {-mainscoreboard}.registerNewTeam(uuid of loop-value)
+		{_team}.setNameTagVisibility(NameTagVisibility.NEVER)
+		{_team}.addPlayer(loop-value)
+on unload:
+	loop all players:
+		{-mainscoreboard}.getTeam(uuid of loop-value).unregister()
+on join with priority HIGHEST:
+	set {_team} to {-mainscoreboard}.registerNewTeam(uuid of player)
+	{_team}.setNameTagVisibility(NameTagVisibility.NEVER)
+	{_team}.addPlayer(player)
+on disconnect with priority HIGHEST:
+	{-mainscoreboard}.getTeam(uuid of player).unregister()
+on rightclick on player:
+	send action bar "Игрок &a%name of clicked entity%" to player
