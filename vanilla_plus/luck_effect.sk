@@ -1,0 +1,27 @@
+import:
+	org.bukkit.potion.PotionEffectType
+	org.bukkit.block.data.Ageable
+	org.bukkit.inventory.EquipmentSlot
+
+on break:
+	if player's gamemode is survival:
+		if player.getPotionEffect(PotionEffectType.LUCK) is set:
+			set {_drops::*} to ...event-block.getDrops(type of player's held item)
+			if event-block.getState().getBlockData() is instance of Ageable:
+				if event-block.getState().getBlockData().getAge() is event-block.getState().getBlockData().getMaximumAge():
+					chance of 33%:
+						drop {_drops::*} at event-block
+			else if {_drops::1}.getType().isBlock() is not true:
+				chance of 33%:
+					drop {_drops::*} at event-block
+
+on death:
+	if victim is not player:
+		if attacker is player:
+			if attacker.getPotionEffect(PotionEffectType.LUCK) is set:
+				chance of 33%:
+					set {_drops::*} to ...event.getDrops()
+					set {_eq} to victim.getEquipment()
+					loop ...EquipmentSlot.values():
+						remove {_eq}.getItem(loop-value) from {_drops::*}
+					drop {_drops::*} at victim

@@ -1,0 +1,45 @@
+on explosion:
+	set {_loc} to location of event-entity
+	loop Exploded Blocks:
+		if loop-value is not air or water or lava:
+			if y coord of loop-value is less than y coord of {_loc}:
+				set {_loc::1} to (location of loop-value ~ vector(0,1,0))
+			else:
+				set {_loc::1} to (location of loop-value ~ vector(0,-1,0))
+			if x coord of loop-value is less than x coord of {_loc}:
+				set {_loc::2} to (location of loop-value ~ vector(1,0,0))
+			else:
+				set {_loc::2} to (location of loop-value ~ vector(-1,0,0))
+			if z coord of loop-value is less than z coord of {_loc}:
+				set {_loc::3} to (location of loop-value ~ vector(0,0,1))
+			else:
+				set {_loc::3} to (location of loop-value ~ vector(0,0,-1))
+			
+			loop {_loc::*}:
+				if block at loop-value-2 is air:
+					add 1 to {_j}
+					set {_locations::%{_j}%} to loop-value-2
+					stop loop
+	loop Exploded Blocks:
+		chance of 10%:
+			set {_fb} to event-world.spawnFallingBlock((random element of {_locations::*}),loop-value.getType(),0)
+			set metadata value "Remove" of {_fb} to true
+			{_fb}.setPersistent(false)
+			{_fb}.setDropItem(false)
+			push {_fb} vector between ({_loc} ~ vector(0,-4,0)) and loop-value at speed 1
+			
+			add 1 to {_i}
+			set {_ents::%{_i}%} to {_fb}
+			
+	loop 30 times:
+		loop {_ents::*}:
+			if loop-value-2.isDead() is false:
+				chance of 30%:
+					lerp 1 large smoke at loop-value-2 with extra 0.01
+			else:
+				delete {_ents::%loop-index%}
+		wait 1 tick
+
+on falling block land:
+	if metadata value "Remove" of event-entity is true:
+		cancel event

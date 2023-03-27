@@ -1,0 +1,3 @@
+on load:
+  set {_leather} to material choice of leather,rabbit hide
+  register new shaped recipe for bundle using string, {_leather}, string, {_leather}, air, {_leather}, {_leather}, {_leather}, {_leather} with id "bundle"
