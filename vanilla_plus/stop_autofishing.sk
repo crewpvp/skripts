@@ -1,0 +1,3 @@
+on rightclick with fishing rod:
+	if event-block is note block or any button or lever or any trapdoor or daylight detector or any door or comparator or repeater or any sign or any bed or bell:
+		cancel event

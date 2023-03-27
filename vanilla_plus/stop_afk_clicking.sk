@@ -1,0 +1,8 @@
+on left click:
+	if {-p::%uuid of player%::click_yaw} is player's yaw:
+		if {-p::%uuid of player%::click_pitch} is player's pitch:
+			add 1 to {-p::%uuid of player%::click_counter}
+			if {-p::%uuid of player%::click_counter} is greater than 10:
+				cancel event
+			stop
+	set {-p::%uuid of player%::click_counter} to 1
