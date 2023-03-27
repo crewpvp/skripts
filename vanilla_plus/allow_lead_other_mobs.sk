@@ -1,0 +1,26 @@
+import:
+	org.bukkit.event.entity.EntityUnleashEvent
+	org.bukkit.event.entity.EntityUnleashEvent$UnleashReason
+
+on rightclick on monsters or villager:
+	if event-entity is not ender dragon or wither or warden:
+		if event-entity.isLeashed() is false:
+			if player's held item is lead:
+				event-entity.setLeashHolder(player)
+				remove 1 of player's held item from player's held item
+				stop
+		else if event-entity.getLeashHolder() is player:
+			cancel event
+			event-entity.setLeashHolder(null)
+			drop 1 of lead at event-entity
+
+
+on EntityUnleashEvent:
+	if monsters, villager contains event.getEntity():
+		if event.getReason() is UnleashReason.PLAYER_UNLEASH:
+			cancel event
+
+on damage of monsters:
+	if victim.isLeashed() is true:
+		victim.setLeashHolder(null)
+		drop 1 of lead at victim

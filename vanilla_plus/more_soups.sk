@@ -110,14 +110,13 @@ on load:
 	set {_addict} to 1
 	set {_deftime} to 1
 	set {_ingridients::*} to {_def::*}, Wither Rose, Ghast Tear
-	loop 1 times:
-		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
-		set {_itemmeta} to {_item}.getItemMeta().clone()
-		{_itemmeta}.clearCustomEffects()
-		{_itemmeta}.addCustomEffect(new PotionEffect(PotionEffectType.HEAL,{_deftime}+((loop-value-1)*{_addict}),2),true)
-		{_item}.setItemMeta({_itemmeta})
-		register new shapeless recipe for {_item} using {_ingridients::*} with id "%{_name}%_%loop-value%"
-		add {_choice} to {_ingridients::*}
+	
+	set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
+	set {_itemmeta} to {_item}.getItemMeta().clone()
+	{_itemmeta}.clearCustomEffects()
+	{_itemmeta}.addCustomEffect(new PotionEffect(PotionEffectType.HEAL,{_deftime},2),true)
+	{_item}.setItemMeta({_itemmeta})
+	register new shapeless recipe for {_item} using {_ingridients::*} with id "%{_name}%_1"
 
 	set {_choice} to wither rose
 	set {_name} to "wither_soup"
