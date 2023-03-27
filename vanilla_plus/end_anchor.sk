@@ -1,0 +1,31 @@
+import:
+	org.bukkit.World$Environment
+	org.bukkit.event.entity.PlayerDeathEvent
+	
+on rightclick on respawn anchor:
+	if (player's world).getEnvironment() is Environment.THE_END:
+		set {_bd} to (clicked block).getBlockData()
+		if player's held item is glowstone:
+			if player is sneaking:
+				cancel event
+			else if {_bd}.getCharges() is {_bd}.getMaximumCharges():
+				cancel event
+			else:
+				stop
+		else:
+			cancel event
+		send "&fТочка возрождения установлена"
+		player.setBedSpawnLocation(location of player,true)
+
+on PlayerDeathEvent:
+	if event.getEntity().getBedSpawnLocation().getWorld().getEnvironment() is Environment.THE_END:
+		loop all blocks in radius 5.8 around event.getEntity().getBedSpawnLocation():
+			if loop-block is respawn anchor:
+				set {_bd} to loop-block.getBlockData().clone()
+				set {_c} to {_bd}.getCharges()
+				if {_c} > 0:
+					event.getEntity().setBedSpawnLocation(event.getEntity().getBedSpawnLocation(),true)
+					{_bd}.setCharges({_c}-1)
+					loop-block.setBlockData({_bd})
+					stop
+		event.getEntity().setBedSpawnLocation(event.getEntity().getBedSpawnLocation(),false)
