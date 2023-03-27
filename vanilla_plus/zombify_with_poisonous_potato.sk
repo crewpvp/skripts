@@ -1,0 +1,4 @@
+on rightclick on villager with poisonous potato:
+	if clicked entity has potion effect regeneration:
+		(clicked entity).zombify()
+		remove 1 of player's held item from player's held item

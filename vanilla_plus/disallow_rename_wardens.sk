@@ -1,0 +1,2 @@
+on rightclick on warden with nametag:
+	cancel event
