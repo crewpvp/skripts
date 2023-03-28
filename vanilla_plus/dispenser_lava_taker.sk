@@ -1,0 +1,18 @@
+import:
+	org.bukkit.Material
+
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item.getType() is Material.BUCKET
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_block} to event-block.getRelative({_facing})
+	if {_block}.getType() is Material.LAVA_CAULDRON:
+		event.setItem(air)
+		drop lava bucket at {_block} without velocity
+		set block at {_block} to empty cauldron
+		wait 1 tick
+		remove bucket from items in inventory of event-block
+	else if {_block}.getType() is Material.CAULDRON:
+		event.setItem(air)
+	
