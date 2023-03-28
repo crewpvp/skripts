@@ -1,0 +1,42 @@
+import:
+	org.bukkit.entity.LivingEntity
+
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item is any sword or bottle
+	if event-item is bottle:
+		loop items in inventory of event-block:
+			if loop-item is any sword:
+				set {_sword} to loop-item
+				stop loop
+	else:
+		set {_sword} to event-item
+
+	if {_sword} is set:
+		cancel event
+		set {_facing} to event-block.getBlockData().getFacing()
+		set {_block} to event-block.getRelative({_facing})
+		set {_damage} to calcItemDamage({_sword})
+		loop entities in radius 0.8 around {_block}:
+			if loop-value is instance of LivingEntity:
+				if loop-value.isDead() is false:
+					if loop-value.getNoDamageTicks() is 0:
+						add 1 to {_amount}
+						damage loop-value by calcDamage({_damage},loop-value) hearts
+						if loop-value.isDead() is true:
+							add 1 to {_killed}
+
+		wait 1 tick
+		if {_killed} is set:
+			set {_bottles} to amount of glass bottle in inventory of event-block
+			set {_bottles} to {_killed} if {_bottles} is greater than {_killed}
+			remove {_bottles} of glass bottle from inventory of event-block
+			drop {_bottles} of experience bottle at {_block} without velocity
+		loop all items in inventory of event-block:
+			if loop-item is {_sword}:
+				if removeDurability(loop-item) is true:
+					add {_amount} to durability of loop-item
+					if durability of loop-item is greater than max durability of {_sword}:
+						remove loop-item from inventory of event-block
+				stop loop
