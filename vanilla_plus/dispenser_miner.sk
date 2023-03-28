@@ -1,0 +1,282 @@
+import:
+	org.bukkit.Material
+	org.bukkit.block.BlockFace
+
+function moveDispenser(block: block,dir: object) :: block:
+	set {_block1} to {_block}.getRelative({_dir})
+	set block at {_block1} to {_block}
+	add (items in inventory of {_block}) to inventory of {_block1}
+	set block at {_block} to air
+	return {_block1}
+function moveDispenserByLoc(block: block, loc: location) :: block:
+	set {_block1} to block at {_loc}
+	if {_block1} is not {_block}:
+		set block at {_block1} to {_block}
+		add (items in inventory of {_block}) to inventory of {_block1}
+		set block at {_block} to air
+		return {_block1}
+	return {_block}
+function moveBlocks(blocks: locations, dir: object) :: locations:
+	set {_vec} to {_dir}.getDirection()
+	loop {_blocks::*}:
+		set {_loc} to (loop-value-1 ~ {_vec})
+		set block at {_loc} to block at loop-value-1
+		set block at loop-value-1 to air
+		set {_blocks::%loop-index%} to {_loc}
+	return {_blocks::*}
+
+function canBreak(block: block) :: boolean:
+	set {_type} to {_block}.getType()
+	if {_type} is not Material.AIR:
+		if {_type} is not Material.CAVE_AIR:
+			if {_type}.getHardness() is between 0 and 50:
+				return true
+	return false
+function canSkipped(block: block) :: boolean:
+	set {_type} to {_block}.getType()
+	if {_type} is not Material.AIR:
+		if {_type} is not Material.CAVE_AIR:
+			if {_type} is not Material.WATER:
+				if {_type} is not Material.LAVA:
+					return false
+	return true
+function canMoveThrough(block: block, dispenser: object = null) :: boolean:
+	set {_type} to {_block}.getType()
+	if {_type} is not {_dispenser}:
+		if {_type} is not Material.AIR:
+			if {_type} is not Material.CAVE_AIR:
+				if {_type} is not Material.WATER:
+					if {_type} is not Material.LAVA:
+						if {_type} is not Material.GRAVEL:
+							if {_type} is not Material.RED_SAND:
+								return false
+	return true
+
+function getCorners(b: block, dir: object) :: objects:
+	if (BlockFace.UP, BlockFace.DOWN) contains {_dir}:
+		set {_dir::1::*} to (BlockFace.SOUTH), (BlockFace.NORTH)
+		set {_dir::2::*} to (BlockFace.WEST), (BlockFace.EAST)
+		set {_rods::1::*} to (southward lightning rod) , (northward lightning rod)
+		set {_rods::2::*} to (westward lightning rod) , (eastward lightning rod)
+	else if (BlockFace.SOUTH,BlockFace.NORTH) contains {_dir}:
+		set {_dir::1::*} to (BlockFace.UP), (BlockFace.DOWN)
+		set {_dir::2::*} to (BlockFace.WEST), (BlockFace.EAST)
+		set {_rods::1::*} to (upward lightning rod) , (downward lightning rod)
+		set {_rods::2::*} to (westward lightning rod) , (eastward lightning rod)
+	else:
+		set {_dir::1::*} to (BlockFace.SOUTH), (BlockFace.NORTH)
+		set {_dir::2::*} to (BlockFace.UP), (BlockFace.DOWN)
+		set {_rods::1::*} to (southward lightning rod) , (northward lightning rod)
+		set {_rods::2::*} to (upward lightning rod) , (downward lightning rod)
+	set {_block} to {_b}
+	loop 2 times:
+		loop 2 times:
+			set {_tblock} to {_block}.getRelative({_dir::%loop-value-1%::%Loop-value-2%})
+			while {_rods::%loop-value-1%::*} contains type of {_tblock}:
+				set {_tblock} to {_tblock}.getRelative({_dir::%loop-value-1%::%Loop-value-2%})
+			if {_tblock} is (copper block) or (cut copper block) or (waxed copper block) or (waxed cut copper block):
+				set {_d::%loop-value-1%} to {_dir::%loop-value-1%::%Loop-value-2%}
+				set {_block} to {_tblock}
+				exit 1 loop
+		if {_tblock} is not (copper block) or (cut copper block) or (waxed copper block) or (waxed cut copper block):
+			return {_}
+	return (location of {_b}),(location of {_tblock}), ({_d::*})
+function getScheme(loc1: location, loc2: location, dir1: object, dir2: object) :: locations:
+	set {_blocks::*} to (block at {_loc1}), (block at {_loc2})
+	if {_blocks::1} and {_blocks::2} is not (copper block) or (cut copper block) or (waxed copper block) or (waxed cut copper block):
+		return {_}
+	set {_i} to 3
+	set {_dirs::*} to ({_dir1}),({_dir1}.getOppositeFace())
+	set {_block::*} to ({_blocks::1}.getRelative({_dirs::1})),({_blocks::2}.getRelative({_dirs::2}))
+
+	loop 63 times:
+		if {_block::1}.getType() and {_block::2}.getType() is Material.LIGHTNING_ROD:
+			if {_dirs::*} doesn't contain (({_block::1}.getBlockData().getFacing()),({_block::2}.getBlockData().getFacing())):
+				return {_}
+			loop 2 times:
+				set {_blocks::%{_i}%} to {_block::%loop-value-2%}
+				set {_block::%loop-value-2%} to {_block::%loop-value-2%}.getRelative({_dirs::%loop-value-2%})
+				add 1 to {_i}
+		else if {_block::1} and {_block::2} is copper block or cut copper block or waxed copper block or waxed cut copper block:
+			set {_good} to true
+			loop 2 times:
+				set {_blocks::%{_i}%} to {_block::%loop-value-2%}
+				add 1 to {_i}
+			stop loop
+		else:
+			return {_}
+	if {_good} is true:
+		set {_dirs::*} to ({_dir2}),({_dir2}.getOppositeFace())
+		set {_block::*} to ({_block::1}.getRelative({_dirs::1})),({_block::2}.getRelative({_dirs::2}))
+		loop 63 times:
+			if {_block::1}.getType() and {_block::2}.getType() is Material.LIGHTNING_ROD:
+				if {_dirs::*} doesn't contain (({_block::1}.getBlockData().getFacing()),({_block::2}.getBlockData().getFacing())):
+					return {_}
+				loop 2 times:
+					set {_blocks::%{_i}%} to {_block::%loop-value-2%}
+					set {_block::%loop-value-2%} to {_block::%loop-value-2%}.getRelative({_dirs::%loop-value-2%})
+					add 1 to {_i}
+			else if {_block::1} and {_block::2} is copper block or cut copper block or waxed copper block or waxed cut copper block:
+				if {_block::1} is not {_blocks::2}:
+					return {_}
+				if {_block::2} is not {_blocks::1}:
+					return {_}
+				return {_blocks::*}
+			else:
+				return {_}
+	return {_}
+
+function getPath(loc1: location, loc2: location,dir1: object, dir2: object, dir3: object) :: locations:
+	set {_vec} to (vector between {_loc1} and {_loc2})
+	set {_loop1} to vector length of ({_vec} ** {_dir2}.getDirection())+1
+	set {_loop2} to vector length of ({_vec} ** {_dir1}.getDirection())
+	set {_block} to block at {_loc1}.add({_dir3}.getDirection())
+	loop {_loop1} times:
+		loop {_loop2} times:
+			add 1 to {_i}
+			set {_locs::%{_i}%} to location of {_block}
+			set {_block} to {_block}.getRelative({_dir1})
+			
+		add 1 to {_i}
+		set {_locs::%{_i}%} to location of {_block}
+
+		set {_block} to {_block}.getRelative({_dir2})
+		set {_dir1} to {_dir1}.getOppositeFace()
+		
+	return {_locs::*}
+function automineConditions(b: block,facing: object,start: location, nopipe: boolean = true) :: item:
+	if {_b} is dispenser:
+		if y coord of {_b} is greater than or equal to -63:
+			if y coord of {_b} is less than or equal to 318:
+				if (x coord of {_b}) is between (x coord of {_start}+128) and (x coord of {_start}-128):
+					if (z coord of {_b}) is between (z coord of {_start}+128) and (z coord of {_start}-128):
+						if (y coord of {_b}) is between (y coord of {_start}+128) and (y coord of {_start}-128):
+							loop items in inventory of {_b}:
+								if type of loop-item is any pickaxe:
+									set {_item} to loop-item
+								if type of loop-item is lightning rod:
+									set {_nopipe} to true
+							if {_item} is set:
+								if {_nopipe} is true:
+									return {_item}
+	return {_}
+
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item is any pickaxe or lightning rod
+	cancel event
+
+	set {_start} to location of event-block
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_block} to event-block.getRelative({_facing})
+	set {_refacing} to {_facing}.getOppositeFace()
+	set {_val::*} to getCorners(event-block.getRelative({_refacing}),{_refacing})
+	if {_val::*} is not set:
+		event-item is any pickaxe
+		{-dispensers::active::%location of event-block%} is not set
+		canBreak({_block}) is true
+
+		set {-dispensers::active::%location of event-block%} to true
+		break {_block} with event-item with calcTime(event-item,{_block}) and store drop in {_d::*}
+		drop {_d::*} at {_block} without velocity
+		wait 1 tick
+		delete {-dispensers::active::%location of event-block%}
+		loop all items in inventory of event-block:
+			if loop-item is event-item:
+				if removeDurability(loop-item) is true:
+					add 1 to durability of loop-item
+					if durability of loop-item is greater than max durability of loop-item:
+						remove loop-item from inventory of event-block
+				stop loop
+		stop
+		
+	set {_vals::*} to getScheme({_val::1},{_val::2},{_val::3},{_val::4})
+	{_vals::*} is set
+		
+	set {_inactivelimit} to 128+(1+(difference between (x coord of {_val::1}) and (x coord of {_val::2})))*(1+(difference between (z coord of {_val::1}) and (z coord of {_val::2})))*(1+(difference between (y coord of {_val::1}) and (y coord of {_val::2})))
+	set {_block} to event-block
+	set {_nopipe} to {_block}.getRelative({_refacing}).getRelative({_refacing})
+	if {_nopipe}.getType() is Material.LIGHTNING_ROD:
+		if ({_facing},{_refacing}) contains {_nopipe}.getBlockData().getFacing():
+			set {_pipe} to {_nopipe}
+			set {_nopipe} to false
+		else:
+			set {_nopipe} to true
+	else:
+		set {_nopipe} to true
+
+	set {_path::*} to getPath({_val::1},{_val::2},{_val::3},{_val::4},{_facing})
+	set {_p} to size of {_path::*}
+
+	
+	set {_forward} to 1
+	set {_i} to 1
+
+	wait 1 tick
+	set {_pickaxe} to automineConditions({_block},{_facing},{_start},{_nopipe})
+	while {_pickaxe} is set:
+
+		loop {_p} times:
+			{_pickaxe} is set
+			canMoveThrough((block at {_path::%{_i}%}),{_block}.getType()) is true
+			{_block} is dispenser
+				
+			set {_block} to moveDispenserByLoc({_block},{_path::%{_i}%})
+			set {_path::%{_i}%} to {_path::%{_i}%} ~ {_facing}.getDirection()
+			set {_target} to {_block}.getRelative({_facing})
+			
+				
+			if canSkipped({_target}) is false:
+				if canBreak({_target}) is false:
+					stop
+				delete {_inactive}
+				loop items in inventory of {_block}:
+					if loop-item is {_pickaxe}:
+						break {_target} with {_pickaxe} with calcTime({_pickaxe},{_target}) and store drop in {_d::*}
+						if {_nopipe} is false:
+							remove pipe({_pipe},{_refacing},{_d::*}) from {_d::*}
+						drop {_d::*} at {_target} without velocity
+						if removeDurability(loop-item) is true:
+							add 1 to durability of loop-item
+							if durability of loop-item is greater than max durability of loop-item:
+								remove loop-item from inventory of {_block}
+								set {_pickaxe} to automineConditions({_block},{_facing},{_start},{_nopipe})
+							else:
+								set {_pickaxe} to loop-item
+						stop loop
+				if {_pickaxe} is not set:
+					stop
+				wait 2 ticks
+			else:
+				add 1 to {_inactive}
+				{_inactive} is less than {_inactivelimit}
+				wait 5 ticks
+
+			add {_forward} to {_i}
+
+		if {_forward} is -1:
+			set {_forward} to 1
+			set {_i} to 1
+		else:
+			set {_forward} to -1
+			set {_i} to {_p}
+
+		getScheme({_val::1},{_val::2},{_val::3},{_val::4}) is set
+		canMoveThrough({_block}.getRelative({_facing})) is true	
+
+		set {_block} to moveDispenser({_block},{_facing})
+		set {_vals::*} to moveBlocks({_vals::*},{_facing})
+		
+		set {_val::1} to {_val::1} ~ {_facing}.getDirection()
+		set {_val::2} to {_val::2} ~ {_facing}.getDirection()
+		
+		set {_pickaxe} to automineConditions({_block},{_facing},{_start},{_nopipe})
+		if {_nopipe} is false:
+			set {_pipe} to {_pipe}.getRelative({_facing})
+			set block at {_pipe} to {_pipe}.getRelative({_refacing})
+			remove 1 of lightning rod from inventory of {_block}
+		wait 5 ticks
+		
+		
+			
