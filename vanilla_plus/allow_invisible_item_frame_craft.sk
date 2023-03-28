@@ -1,0 +1,30 @@
+import:
+	org.bukkit.entity.EntityType
+	org.bukkit.event.hanging.HangingBreakEvent
+
+on load:
+	set {-invisibleitemframe} to item frame named "&eНевидимая рамка"  with nbt (nbt compound from "{EntityTag:{Invisible:1b}}")
+	set {-invisibleglowitemframe} to glow item frame named "&eНевидимая светящаяся рамка" with nbt (nbt compound from "{EntityTag:{Invisible:1b}}")
+
+	register new shapeless recipe for {-invisibleitemframe} using item frame,phantom membrane with id "invisible_item_frame"
+	register new shapeless recipe for {-invisibleglowitemframe} using {-invisibleitemframe},glow ink sac with id "invisible_glow_item_frame_2"
+	register new shapeless recipe for {-invisibleglowitemframe} using glow item frame,phantom membrane with id "invisible_glow_item_frame"
+
+
+on HangingBreakEvent:
+	if event.getEntity().getType() is EntityType.ITEM_FRAME:
+		if event.getEntity().isVisible() is false:
+			cancel event
+			drop event.getEntity().getItem() at event.getEntity()
+			play sound "minecraft:entity.item_frame.break" at event.getEntity()
+			drop {-invisibleitemframe} at event.getEntity()
+			event.getEntity().remove()	
+
+	else if event.getEntity().getType() is EntityType.GLOW_ITEM_FRAME:
+		if event.getEntity().isVisible() is false:
+			cancel event
+			drop event.getEntity().getItem() at event.getEntity()
+			play sound "minecraft:entity.item_frame.break" at event.getEntity()
+			drop {-invisibleglowitemframe} at event.getEntity()
+			event.getEntity().remove()
+			
