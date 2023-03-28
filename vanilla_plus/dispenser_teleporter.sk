@@ -1,0 +1,74 @@
+import:
+	org.bukkit.Material
+	org.bukkit.block.BlockFace
+	org.bukkit.entity.LivingEntity
+
+function teleportPipe(block: block, facing: object) :: location:
+	set {_directions::*} to (BlockFace.DOWN),(BlockFace.WEST),(BlockFace.EAST),(BlockFace.NORTH),(BlockFace.SOUTH),(BlockFace.UP)
+	set {_rfacing} to {_facing}.getOppositeFace()
+	set {_start} to {_block}.getRelative({_rfacing})
+	loop 5000 times:
+		if {_block}.getType() is Material.END_ROD:
+			set {_irod} to {_block}
+			if {_block}.getBlockData().getFacing() is {_facing} or {_rfacing}:
+				set {_block} to {_block}.getRelative({_facing})
+		else if {_block} is dispenser:
+			if {_start} is not {_block}:
+				if {_block}.getBlockData().getFacing() is {_facing}:
+					set {_location} to location of {_block} ~ {_facing}.getDirection()
+					stop loop
+		else if {_block} is purpur block or purpur pillar:
+			if {_points::%{_block}%} is not set:
+				set {_points::%{_block}%} to true
+				add 1 to {_c}
+				set {_roads::%{_c}%::*} to ({_block}.getRelative(BlockFace.DOWN)),({_block}.getRelative(BlockFace.WEST)),({_block}.getRelative(BlockFace.EAST)),({_block}.getRelative(BlockFace.NORTH)),({_block}.getRelative(BlockFace.SOUTH)),({_block}.getRelative(BlockFace.UP))
+				remove {_irod} from {_roads::%{_c}%::*}
+			delete {_block}
+		else:
+			if {_roads::%{_c}%::*} is not set:
+				remove 1 from {_c}
+
+			if {_c} is less than 1:
+				stop loop
+
+			loop {_roads::%{_c}%::*}:
+
+				set {_block} to loop-value-2
+				delete {_roads::%{_c}%::%loop-index%}
+				set {_facing} to {_directions::%loop-index%}
+				set {_rfacing} to {_facing}.getOppositeFace()
+				if {_block}.getType() is Material.END_ROD:
+					if {_block}.getBlockData().getFacing() is {_facing} or {_rfacing}:
+						exit this loop
+	return {_location}
+
+on dispense:
+	event is not cancelled
+	event-item is ender eye
+	cancel event
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_block} to event-block.getRelative({_facing})
+	set {_refacing} to {_facing}.getOppositeFace()
+	set {_reblock} to event-block.getRelative({_refacing})
+	{_reblock}.getType() is Material.END_ROD 
+	{_reblock}.getBlockData().getFacing() is ({_refacing} or {_facing})
+	set {_loc} to teleportPipe({_reblock},{_refacing})
+	{_loc} is set
+	loop entities in radius 0.8 around {_block}:
+		if loop-value is instance of LivingEntity:
+			set {_entity} to loop-value
+			stop loop
+	{_entity} is set
+	inventory of event-block contains 7 of ender eye
+	play sound "minecraft:block.conduit.activate" at volume 1 at {_block}
+	set {_dist} to distance between event-block and {_loc}
+	apply nausea of tier 2 to {_entity} for 10 seconds
+	apply weakness of tier 2 to {_entity} for ("%{_dist}/3% seconds" parsed as timespan)
+	apply mining fatigue to {_entity} for ("%{_dist}/3% seconds" parsed as timespan)
+	apply hunger of tier 3 to {_entity} for ("%{_dist}/10% seconds" parsed as timespan)
+	draw 70 of portal at {_entity} ~ vector(0,1,0)
+	teleport {_entity} to {_loc}
+	play sound "minecraft:block.conduit.activate" at volume 1 at {_loc}
+	draw 70 of reverse portal at {_entity} ~ vector(0,1,0)
+	wait 1 tick
+	remove 8 of ender eye from inventory of event-block
