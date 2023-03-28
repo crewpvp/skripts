@@ -1,0 +1,439 @@
+options:
+	gui_Name: "Изменение позы стойки"
+	toggle_lore: "&7Нажмите для переключения"
+	off_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1254123682,676807291,-1092745574,2013554683],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjRlNzVjMzExOWZiNGNmZjdjZWNjODA2NGNlZGM0ZjkxMzVmZTAwMTU3M2ZiNzAyZTczZTRhODE4ZDQ1MzlkZSJ9fX0=""}]}}}")
+	on_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-633980443,-965786644,-1236599343,-445874542],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTkxOWRkNzJlMzhjZWMzNjljNjUwODY4Njg5NmNjYjg0MTAwZmQwMjdjNGY2MGE2ODFkMTZhNzY0MDMyOWNjIn19fQ==""}]}}}")
+
+
+	button_lore: "&7ЛКМ увеличить", "&8ЛКМ+SHIFT по 10 за раз", "&7ПКМ уменьшить", "&8ПКМ+SHIFT по 10 за раз"
+
+	rotate_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;1414209565,1189889207,-2057984159,1193262203],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzE2ODI5MWFiYWM0YTVmODZmZThiMzYwMzM4OTg2YWVlN2FiY2I3ZjRiODE2OWViNTVkZmVjOTI4NTYxMjU4In19fQ==""}]}}}")
+
+	x_head_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;426208337,1829258249,-1296936823,1782922722],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2ZlMWQyMjJlYjFhMzVkNzMzZmJkZTdjMTM0MmVmYTgyMTg5OGI1NmM3YzI4YTY5YjY4Nzg5MjBiNTExIn19fQ==""}]}}}")
+	y_head_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-441512638,-1419295813,-1924379214,-1324024492],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY2MDQ4MWFhZTQ0NmYyMzYwNDYyMmMyNTEzM2JkMjJiOTliNTZhMWMyOGZjZGEyZDkxNTYwZWZkYWFkZWRhIn19fQ==""}]}}}")
+	z_head_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;109171453,955794545,-1718980072,-967815090],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzliZjZkYmI0N2Y5ODZlODI1ZGRiNTg4YjU1MTkyODNjMmYwMzg2MGZkYTgxODQ3ZDUxMWUxZDU5NjZlOGNmYSJ9fX0=""}]}}}")
+
+	x_body_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-159912575,1962427665,-1111835817,-5206145],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjk5ODI2MThhYTVjOGI5NDM3MmExNmM2NjYyY2IyZjNlOTc3NDEyZTcwMWVjNmMyMzc2Y2NmMzlmZGRiYiJ9fX0=""}]}}}")
+	y_body_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1715629331,-1535818547,-1459546354,2140114442],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmI4YjU2NmQxZDYxZWQyOGFiYTE1YmVmOTUxMzQ1YTg4YmVkZjhjYjQ1MjQ0ZWE4YzRmNjVhODMxNWQ4NCJ9fX0=""}]}}}")
+	z_body_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1041035791,-1959968452,-2025384602,-1511542084],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWMxNWM2MzFkZjY5NDZlZTQ2MDYxZTc3NDNlZjFlMDE2ZDExYzY0ZmE4ZjRhOGE1ZTM4ZjRhNDVhY2E0ZCJ9fX0=""}]}}}")
+
+	x_rightArm_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;1590668272,1381189552,-1538418164,-1841266247],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==""}]}}}")
+	y_rightArm_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-946285045,-165788838,-2089443659,314644914],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDg4ZjZlZTI2ZmI3NGM3YjJlMmJhM2UzYzRhNTg3MjE2YTFmZDZjYmNjNmRmZjljZDM1MGNiMjY5YWY5M2I3In19fQ==""}]}}}")
+	z_rightArm_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1064209609,-2142746115,-1771532150,-337197830],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzgzY2UwODcyNTQ4YTlkMWVlYzcyZTViMTk1YWE5OWMzYjAyZjY2NTg5MmI5ODcyNzIyYWNiY2UyMWU5MyJ9fX0=""}]}}}")
+
+	x_leftArm_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;195271244,138365251,-1444721203,1601141747],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWQxYTNjOTY1NjIzNDg1MjdkNTc5OGYyOTE2MDkyODFmNzJlMTZkNjExZjFhNzZjMGZhN2FiZTA0MzY2NSJ9fX0=""}]}}}")
+	y_leftArm_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-202800316,35341805,-1474957780,547030027],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2RhOGI2NDczMDUyYWRhMjJlNmNhMzBjNDlmNmRjZTliOTk5MTZlNDIzYWM0ZmM2YjMwMWFkNzMzNjk3ZiJ9fX0=""}]}}}")
+	z_leftArm_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;828555647,1907966961,-1542267892,-363856468],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzBkNDRmZWUwMzAzZjZkMzdmYWNhN2U5YzMxNTMwOTU1NmZhM2RmMzc5YmRkNTgyMzE3YWEzNjhhYTg0M2UifX19""}]}}}")
+
+	x_rightLeg_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1886914514,-457815935,-1173876672,-1430201617],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDVlMWJlMzMzNzRmZDdiMmJhZTljOGZjOTE0NmI2ZWQzZWVkY2IxNDc2YjNiN2I4MDEwZjVmNDRiZmE4NDNlIn19fQ==""}]}}}")
+	y_rightLeg_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1305531857,-2117842682,-1887808594,1507222958],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTk0ODNkMGQzZmYyMTI0OWRhOWU2ZjQwNWJiMGVhNzg4NjU1OGRmMWE4NGM5YWUzNjRlZjRlODY3NGViYTgifX19""}]}}}")
+	z_rightLeg_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1050528809,-985315946,-1986564414,2084904595],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTJkMzU0OTI4ZDljNzI4Y2MzZDQ0NjFhYTI2NmZmZTRiYWNmZTQ0OTIxYWZlYWQyYjU5ZGM3Yzk4MWE5MzQ2In19fQ==""}]}}}")
+
+	x_leftLeg_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1835420975,-1909109512,-1895892029,928958486],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmU4NjQ2YmI3NmYwYzZkMDNhNjM3YTliNDk3NWIzYTg1Mjc2ZWIyMGQ2ZjE2YmRiOTE4NjZjOGMzYzgyODVjNSJ9fX0=""}]}}}")
+	y_leftLeg_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-405868123,1109476492,-1630967671,-386811936],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODMxZDNkZjk5NTc4Yzc5ZTBmZDY0YjYxMTViNmI0NGVkNGRjYWI0YTk4N2JlN2M3ZTkxYmFhNjE4ODZlMGViIn19fQ==""}]}}}")
+	z_leftLeg_button: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;1126840109,-1095614239,-1382801758,-1272700690],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzYxNTdiOWMxMDEzMTI4MzhiMTI4ZTcxZDU1YmZjOWFkNGUyNmI1OTE5YTczODA3YjEzNDY2YTc2ZDVlMCJ9fX0=""}]}}}")
+
+	pose_1: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;439253212,-1974449257,-1656218323,-384242869],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTQ1ZGQ3YzU3NWIxNjIwNDRmNWJhZGQxYTdmY2E4YzZiOTVkNmExYTUxNmY0MjA2MzY5MjgzMzNiZWNhODYifX19""}]}}}") named "&fПоза: &e""Солдат""" with lore "&7Нажмите для установки позы"
+	pose_2: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1483084693,-376814722,-1597464091,-1967817229],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDU0MzVjMzdlZGFmZTE2NWM5MmFlMzczNmUxNWM0NjRhZDYyMWQ2MTIyMDQzNWQxYTM5YWRiNDcwNWZiODg2In19fQ==""}]}}}") named "&fПоза: &e""Это птица, это самолет!""" with lore "&7Нажмите для установки позы"
+	pose_3: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;1721097750,-1783528080,1296449305,-832475899],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDkxM2E0YWYyZDMwNjQ3MTNmNzA0MTg3ZTU3ZTZiZWMzZGVlYzk0ZjFjMzM3MWIyYjM1YzZjNWU0MjdjYjAifX19""}]}}}") named "&fПоза: &e""Проходите""" with lore "&7Нажмите для установки позы"
+	pose_4: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-2009936644,-1995816897,-1500231873,1626354653],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzlmZjVmN2Y5Mzc2YTY5N2Q4Mjc3NDJlYzNiYWFkZGJiODc2MzYyMmRhZGFhYWZhOWFiZGQ3ODg5MTlhODc0YiJ9fX0=""}]}}}") named "&fПоза: &e""Привет""" with lore "&7Нажмите для установки позы"
+	pose_5: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-234979239,-2106179568,-1894243577,1671998733],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTZmOWVkYzgyM2IwNzU5YjQ3YmYxMjY4ZmVlYzYwNjQ0ZGQxZTAxZTliY2ZkMmE2NTA3YWRhYTc0Y2E3MTBmOCJ9fX0=""}]}}}") named "&fПоза: &e""Бег""" with lore "&7Нажмите для установки позы"
+	pose_6: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1215901288,-1036172460,-1989460962,-766451858],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2U5ODQ0MmQ4Y2RiYzYxODRmN2VmNTViZWNmYWRkOGI1ODE2MmM1MGNiNzUxYmQ2ZDQyZWVjMTFlMzM4YmNlIn19fQ==""}]}}}") named "&fПоза: &e""Сидит""" with lore "&7Нажмите для установки позы"
+	pose_7: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;902966706,1823555948,-1552036819,223560965],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDkzZmQ4ZmMzNjc3NTcxM2Q4ZjcyODgzYmNmMGFlNWJiZjg3ZGRkYTdmNGI0ZTNiZDJhZTQ5ODVmYTNlNiJ9fX0=""}]}}}") named "&fПоза: &e""Радуется""" with lore "&7Нажмите для установки позы"
+	pose_8: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-593323462,1993558393,-2002637408,884576786],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmNlZjlhYTE0ZTg4NDc3M2VhYzEzNGE0ZWU4OTcyMDYzZjQ2NmRlNjc4MzYzY2Y3YjFhMjFhODViNyJ9fX0=""}]}}}") named "&fПоза: &e""Делится""" with lore "&7Нажмите для установки позы"
+	pose_9: player head with nbt (nbt compound from "{SkullOwner:{Id:[I;-1722163816,-273461527,-1459933222,35179936],Properties:{textures:[{Value:""eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTZmYzg1NGJiODRjZjRiNzY5NzI5Nzk3M2UwMmI3OWJjMTA2OTg0NjBiNTFhNjM5YzYwZTVlNDE3NzM0ZTExIn19fQ==""}]}}}") named "&fПоза: &e""Зомбу""" with lore "&7Нажмите для установки позы"
+
+import:
+	org.bukkit.util.EulerAngle
+	
+function armorstandEditGui(p: player, e:entity):
+	create a gui with chest inventory with 5 rows named {@gui_Name}:
+		if {_e}.hasArms() is true:
+			set {_button} to {@on_button} named "&fРуки: &aВКЛ"
+		else:
+			set {_button} to {@off_button} named "&fРуки: &cВЫКЛ"
+		make next gui slot with {_button} with lore {@toggle_lore}:
+			if {_e}.hasArms() is true:
+				{_e}.setArms(false)
+				set gui item to {@off_button} named "&fРуки: &cВЫКЛ" with lore {@toggle_lore}
+			else:
+				{_e}.setArms(true)
+				set gui item to {@on_button} named "&fРуки: &aВКЛ" with lore {@toggle_lore}
+
+		if {_e}.isSmall() is true:
+			set {_button} to {@on_button} named "&fРазмер: &aМаленький"
+		else:
+			set {_button} to {@off_button} named "&fРазмер: &cСтандартный"
+		make next gui slot with {_button} with lore {@toggle_lore}:
+			if {_e}.isSmall() is false:
+				{_e}.setSmall(true)
+				set gui item to {@on_button} named "&fРазмер: &aМаленький" with lore {@toggle_lore}
+			else:
+				{_e}.setSmall(false)
+				set gui item to {@off_button} named "&fРазмер: &cСтандартный" with lore {@toggle_lore}
+
+		if {_e}.hasBasePlate() is true:
+			set {_button} to {@on_button} named "&fПодставка: &aВКЛ"
+		else:
+			set {_button} to {@off_button} named "&fПодставка: &cВЫКЛ"
+		make gui slot 9 with {_button} with lore {@toggle_lore}:
+			if {_e}.hasBasePlate() is true:
+				{_e}.setBasePlate(false)
+				set gui item to {@off_button} named "&fПодставка: &cВЫКЛ" with lore {@toggle_lore}
+			else:
+				{_e}.setBasePlate(true)
+				set gui item to {@on_button} named "&fПодставка &aВКЛ" with lore {@toggle_lore}
+					
+		make gui slot 10 with {@rotate_button} named "&fВращение по оси: &a%yaw of {_e}%°" with lore {@button_lore}:
+			if click type is left mouse button:
+				{_e}.setRotation(yaw of {_e}+1,pitch of {_e})
+			else if click type is left mouse button with shift:
+				{_e}.setRotation(yaw of {_e}+10,pitch of {_e})
+			else if click type is right mouse button:
+				{_e}.setRotation(yaw of {_e}-1,pitch of {_e})
+			else if click type is right mouse button with shift:
+				{_e}.setRotation(yaw of {_e}-10,pitch of {_e})
+			if yaw of {_e} is greater than 359:
+				{_e}.setRotation(yaw of {_e}-360,pitch of {_e})
+			else if yaw of {_e} is less than 0:
+				{_e}.setRotation(360+yaw of {_e},pitch of {_e})
+			set name of gui item to "&fВращение по оси: &a%yaw of {_e}%°"
+
+		set {_head} to {_e}.getHeadPose()
+		make gui slot 3 with {@x_head_button} named "&fВращение &eголовы&f по X: &a%{_head}.getX()%" with lore {@button_lore}:
+			set {_head} to {_e}.getHeadPose()
+			if click type is left mouse button:
+				set {_head} to new EulerAngle({_head}.getX()+0.01,{_head}.getY(),{_head}.getZ())
+			else if click type is left mouse button with shift:
+				set {_head} to new EulerAngle({_head}.getX()+0.1,{_head}.getY(),{_head}.getZ())
+			else if click type is right mouse button:
+				set {_head} to new EulerAngle({_head}.getX()-0.01,{_head}.getY(),{_head}.getZ())
+			else if click type is right mouse button with shift:
+				set {_head} to new EulerAngle({_head}.getX()-0.1,{_head}.getY(),{_head}.getZ())
+			{_e}.setHeadPose({_head})
+			set name of clicked slot to "&fВращение &eголовы&f по X: &a%{_head}.getX()%"
+		make gui slot 12 with {@y_head_button} named "&fВращение &eголовы&f по Y: &a%{_head}.getY()%" with lore {@button_lore}:
+			set {_head} to {_e}.getHeadPose()
+			if click type is left mouse button:
+				set {_head} to new EulerAngle({_head}.getX(),{_head}.getY()+0.01,{_head}.getZ())
+			else if click type is left mouse button with shift:
+				set {_head} to new EulerAngle({_head}.getX(),{_head}.getY()+0.1,{_head}.getZ())
+			else if click type is right mouse button:
+				set {_head} to new EulerAngle({_head}.getX(),{_head}.getY()-0.01,{_head}.getZ())
+			else if click type is right mouse button with shift:
+				set {_head} to new EulerAngle({_head}.getX(),{_head}.getY()-0.1,{_head}.getZ())
+			{_e}.setHeadPose({_head})
+			set name of gui item to "&fВращение &eголовы&f по Y: &a%{_head}.getY()%"
+		make gui slot 21 with {@z_head_button} named "&fВращение &eголовы&f по Z: &a%{_head}.getZ()%" with lore {@button_lore}:
+			set {_head} to {_e}.getHeadPose()
+			if click type is left mouse button:
+				set {_head} to new EulerAngle({_head}.getX(),{_head}.getY(),{_head}.getZ()+0.01)
+			else if click type is left mouse button with shift:
+				set {_head} to new EulerAngle({_head}.getX(),{_head}.getY(),{_head}.getZ()+0.1)
+			else if click type is right mouse button:
+				set {_head} to new EulerAngle({_head}.getX(),{_head}.getY(),{_head}.getZ()-0.01)
+			else if click type is right mouse button with shift:
+				set {_head} to new EulerAngle({_head}.getX(),{_head}.getY(),{_head}.getZ()-0.1)
+			{_e}.setHeadPose({_head})
+			set name of gui item to "&fВращение &eголовы&f по Z: &a%{_head}.getZ()%"
+
+		set {_body} to {_e}.getBodyPose()
+		make gui slot 4 with {@x_body_button} named "&fВращение &eтела&f по X: &a%{_body}.getX()%" with lore {@button_lore}:
+			set {_body} to {_e}.getBodyPose()
+			if click type is left mouse button:
+				set {_body} to new EulerAngle({_body}.getX()+0.01,{_body}.getY(),{_body}.getZ())
+			else if click type is left mouse button with shift:
+				set {_body} to new EulerAngle({_body}.getX()+0.1,{_body}.getY(),{_body}.getZ())
+			else if click type is right mouse button:
+				set {_body} to new EulerAngle({_body}.getX()-0.01,{_body}.getY(),{_body}.getZ())
+			else if click type is right mouse button with shift:
+				set {_body} to new EulerAngle({_body}.getX()-0.1,{_body}.getY(),{_body}.getZ())
+			{_e}.setBodyPose({_body})
+			set name of gui item to "&fВращение &eтела&f по X: &a%{_body}.getX()%"
+		make gui slot 13 with {@y_body_button} named "&fВращение &eтела&f по Y: &a%{_body}.getY()%" with lore {@button_lore}:
+			set {_body} to {_e}.getBodyPose()
+			if click type is left mouse button:
+				set {_body} to new EulerAngle({_body}.getX(),{_body}.getY()+0.01,{_body}.getZ())
+			else if click type is left mouse button with shift:
+				set {_body} to new EulerAngle({_body}.getX(),{_body}.getY()+0.1,{_body}.getZ())
+			else if click type is right mouse button:
+				set {_body} to new EulerAngle({_body}.getX(),{_body}.getY()-0.01,{_body}.getZ())
+			else if click type is right mouse button with shift:
+				set {_body} to new EulerAngle({_body}.getX(),{_body}.getY()-0.1,{_body}.getZ())
+			{_e}.setBodyPose({_body})
+			set name of gui item to "&fВращение &eтела&f по Y: &a%{_body}.getY()%"
+		make gui slot 22 with {@z_body_button} named "&fВращение &eтела&f по Z: &a%{_body}.getZ()%" with lore {@button_lore}:
+			set {_body} to {_e}.getBodyPose()
+			if click type is left mouse button:
+				set {_body} to new EulerAngle({_body}.getX(),{_body}.getY(),{_body}.getZ()+0.01)
+			else if click type is left mouse button with shift:
+				set {_body} to new EulerAngle({_body}.getX(),{_body}.getY(),{_body}.getZ()+0.1)
+			else if click type is right mouse button:
+				set {_body} to new EulerAngle({_body}.getX(),{_body}.getY(),{_body}.getZ()-0.01)
+			else if click type is right mouse button with shift:
+				set {_body} to new EulerAngle({_body}.getX(),{_body}.getY(),{_body}.getZ()-0.1)
+			{_e}.setBodyPose({_body})
+			set name of slot 22 of player's current inventory to "&fВращение &eтела&f по Z: &a%{_body}.getZ()%"
+
+		set {_leftArm} to {_e}.getLeftArmPose()
+		make gui slot 5 with {@x_leftArm_button} named "&fВращение &eлевой руки&f по X: &a%{_leftArm}.getX()%" with lore {@button_lore}:
+			set {_leftArm} to {_e}.getLeftArmPose()
+			if click type is left mouse button:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX()+0.01,{_leftArm}.getY(),{_leftArm}.getZ())
+			else if click type is left mouse button with shift:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX()+0.1,{_leftArm}.getY(),{_leftArm}.getZ())
+			else if click type is right mouse button:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX()-0.01,{_leftArm}.getY(),{_leftArm}.getZ())
+			else if click type is right mouse button with shift:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX()-0.1,{_leftArm}.getY(),{_leftArm}.getZ())
+			{_e}.setLeftArmPose({_leftArm})
+			set name of gui item to "&fВращение &eлевой руки&f по X: &a%{_leftArm}.getX()%"
+		make gui slot 14 with {@y_leftArm_button} named "&fВращение &eлевой руки&f по Y: &a%{_leftArm}.getY()%" with lore {@button_lore}:
+			set {_leftArm} to {_e}.getLeftArmPose()
+			if click type is left mouse button:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX(),{_leftArm}.getY()+0.01,{_leftArm}.getZ())
+			else if click type is left mouse button with shift:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX(),{_leftArm}.getY()+0.1,{_leftArm}.getZ())
+			else if click type is right mouse button:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX(),{_leftArm}.getY()-0.01,{_leftArm}.getZ())
+			else if click type is right mouse button with shift:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX(),{_leftArm}.getY()-0.1,{_leftArm}.getZ())
+			{_e}.setLeftArmPose({_leftArm})
+			set name of gui item to "&fВращение &eлевой руки&f по Y: &a%{_leftArm}.getY()%"
+		make gui slot 23 with {@z_leftArm_button} named "&fВращение &eлевой руки&f по Z: &a%{_leftArm}.getZ()%" with lore {@button_lore}:
+			set {_leftArm} to {_e}.getLeftArmPose()
+			if click type is left mouse button:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX(),{_leftArm}.getY(),{_leftArm}.getZ()+0.01)
+			else if click type is left mouse button with shift:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX(),{_leftArm}.getY(),{_leftArm}.getZ()+0.1)
+			else if click type is right mouse button:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX(),{_leftArm}.getY(),{_leftArm}.getZ()-0.01)
+			else if click type is right mouse button with shift:
+				set {_leftArm} to new EulerAngle({_leftArm}.getX(),{_leftArm}.getY(),{_leftArm}.getZ()-0.1)
+			{_e}.setLeftArmPose({_leftArm})
+			set name of gui item to "&fВращение &eлевой руки&f по Z: &a%{_leftArm}.getZ()%"
+
+		set {_RightArm} to {_e}.getRightArmPose()
+		make gui slot 6 with {@x_rightArm_button} named "&fВращение &eправой руки&f по X: &a%{_RightArm}.getX()%" with lore {@button_lore}:
+			set {_RightArm} to {_e}.getRightArmPose()
+			if click type is left mouse button:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX()+0.01,{_RightArm}.getY(),{_RightArm}.getZ())
+			else if click type is left mouse button with shift:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX()+0.1,{_RightArm}.getY(),{_RightArm}.getZ())
+			else if click type is right mouse button:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX()-0.01,{_RightArm}.getY(),{_RightArm}.getZ())
+			else if click type is right mouse button with shift:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX()-0.1,{_RightArm}.getY(),{_RightArm}.getZ())
+			{_e}.setRightArmPose({_RightArm})
+			set name of gui item to "&fВращение &eправой руки&f по X: &a%{_RightArm}.getX()%"
+		make gui slot 15 with {@y_rightArm_button} named "&fВращение &eправой руки&f по Y: &a%{_RightArm}.getY()%" with lore {@button_lore}:
+			set {_RightArm} to {_e}.getRightArmPose()
+			if click type is left mouse button:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX(),{_RightArm}.getY()+0.01,{_RightArm}.getZ())
+			else if click type is left mouse button with shift:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX(),{_RightArm}.getY()+0.1,{_RightArm}.getZ())
+			else if click type is right mouse button:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX(),{_RightArm}.getY()-0.01,{_RightArm}.getZ())
+			else if click type is right mouse button with shift:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX(),{_RightArm}.getY()-0.1,{_RightArm}.getZ())
+			{_e}.setRightArmPose({_RightArm})
+			set name of gui item to "&fВращение &eправой руки&f по Y: &a%{_RightArm}.getY()%"
+		make gui slot 24 with {@z_rightArm_button} named "&fВращение &eправой руки&f по Z: &a%{_RightArm}.getZ()%" with lore {@button_lore}:
+			set {_RightArm} to {_e}.getRightArmPose()
+			if click type is left mouse button:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX(),{_RightArm}.getY(),{_RightArm}.getZ()+0.01)
+			else if click type is left mouse button with shift:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX(),{_RightArm}.getY(),{_RightArm}.getZ()+0.1)
+			else if click type is right mouse button:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX(),{_RightArm}.getY(),{_RightArm}.getZ()-0.01)
+			else if click type is right mouse button with shift:
+				set {_RightArm} to new EulerAngle({_RightArm}.getX(),{_RightArm}.getY(),{_RightArm}.getZ()-0.1)
+			{_e}.setRightArmPose({_RightArm})
+			set name of gui item to "&fВращение &eправой руки&f по Z: &a%{_RightArm}.getZ()%"
+
+		set {_leftLeg} to {_e}.getLeftLegPose()
+		make gui slot 7 with {@x_leftLeg_button} named "&fВращение &eлевой ноги&f по X: &a%{_leftLeg}.getX()%" with lore {@button_lore}:
+			set {_leftLeg} to {_e}.getLeftLegPose()
+			if click type is left mouse button:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX()+0.01,{_leftLeg}.getY(),{_leftLeg}.getZ())
+			else if click type is left mouse button with shift:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX()+0.1,{_leftLeg}.getY(),{_leftLeg}.getZ())
+			else if click type is right mouse button:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX()-0.01,{_leftLeg}.getY(),{_leftLeg}.getZ())
+			else if click type is right mouse button with shift:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX()-0.1,{_leftLeg}.getY(),{_leftLeg}.getZ())
+			{_e}.setLeftLegPose({_leftLeg})
+			set name of gui item to "&fВращение &eлевой ноги&f по X: &a%{_leftLeg}.getX()%"
+		make gui slot 16 with {@y_leftLeg_button} named "&fВращение &eлевой ноги&f по Y: &a%{_leftLeg}.getY()%" with lore {@button_lore}:
+			set {_leftLeg} to {_e}.getLeftLegPose()
+			if click type is left mouse button:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX(),{_leftLeg}.getY()+0.01,{_leftLeg}.getZ())
+			else if click type is left mouse button with shift:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX(),{_leftLeg}.getY()+0.1,{_leftLeg}.getZ())
+			else if click type is right mouse button:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX(),{_leftLeg}.getY()-0.01,{_leftLeg}.getZ())
+			else if click type is right mouse button with shift:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX(),{_leftLeg}.getY()-0.1,{_leftLeg}.getZ())
+			{_e}.setLeftLegPose({_leftLeg})
+			set name of gui item to "&fВращение &eлевой ноги&f по Y: &a%{_leftLeg}.getY()%"
+		make gui slot 25 with {@z_leftLeg_button} named "&fВращение &eлевой ноги&f по Z: &a%{_leftLeg}.getZ()%" with lore {@button_lore}:
+			set {_leftLeg} to {_e}.getLeftLegPose()
+			if click type is left mouse button:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX(),{_leftLeg}.getY(),{_leftLeg}.getZ()+0.01)
+			else if click type is left mouse button with shift:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX(),{_leftLeg}.getY(),{_leftLeg}.getZ()+0.1)
+			else if click type is right mouse button:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX(),{_leftLeg}.getY(),{_leftLeg}.getZ()-0.01)
+			else if click type is right mouse button with shift:
+				set {_leftLeg} to new EulerAngle({_leftLeg}.getX(),{_leftLeg}.getY(),{_leftLeg}.getZ()-0.1)
+			{_e}.setLeftLegPose({_leftLeg})
+			set name of gui item to "&fВращение &eлевой ноги&f по Z: &a%{_leftLeg}.getZ()%"
+
+		set {_RightLeg} to {_e}.getRightLegPose()
+		make gui slot 8 with {@x_rightLeg_button} named "&fВращение &eправой ноги&f по X: &a%{_RightLeg}.getX()%" with lore {@button_lore}:
+			set {_RightLeg} to {_e}.getRightLegPose()
+			if click type is left mouse button:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX()+0.01,{_RightLeg}.getY(),{_RightLeg}.getZ())
+			else if click type is left mouse button with shift:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX()+0.1,{_RightLeg}.getY(),{_RightLeg}.getZ())
+			else if click type is right mouse button:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX()-0.01,{_RightLeg}.getY(),{_RightLeg}.getZ())
+			else if click type is right mouse button with shift:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX()-0.1,{_RightLeg}.getY(),{_RightLeg}.getZ())
+			{_e}.setRightLegPose({_RightLeg})
+			set name of gui item to "&fВращение &eправой ноги&f по X: &a%{_RightLeg}.getX()%"
+		make gui slot 17 with {@y_rightLeg_button} named "&fВращение &eправой ноги&f по Y: &a%{_RightLeg}.getY()%" with lore {@button_lore}:
+			set {_RightLeg} to {_e}.getRightLegPose()
+			if click type is left mouse button:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX(),{_RightLeg}.getY()+0.01,{_RightLeg}.getZ())
+			else if click type is left mouse button with shift:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX(),{_RightLeg}.getY()+0.1,{_RightLeg}.getZ())
+			else if click type is right mouse button:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX(),{_RightLeg}.getY()-0.01,{_RightLeg}.getZ())
+			else if click type is right mouse button with shift:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX(),{_RightLeg}.getY()-0.1,{_RightLeg}.getZ())
+			{_e}.setRightLegPose({_RightLeg})
+			set name of gui item to "&fВращение &eправой ноги&f по Y: &a%{_RightLeg}.getY()%"
+		make gui slot 26 with {@z_rightLeg_button} named "&fВращение &eправой ноги&f по Z: &a%{_RightLeg}.getZ()%" with lore {@button_lore}:
+			set {_RightLeg} to {_e}.getRightLegPose()
+			if click type is left mouse button:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX(),{_RightLeg}.getY(),{_RightLeg}.getZ()+0.01)
+			else if click type is left mouse button with shift:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX(),{_RightLeg}.getY(),{_RightLeg}.getZ()+0.1)
+			else if click type is right mouse button:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX(),{_RightLeg}.getY(),{_RightLeg}.getZ()-0.01)
+			else if click type is right mouse button with shift:
+				set {_RightLeg} to new EulerAngle({_RightLeg}.getX(),{_RightLeg}.getY(),{_RightLeg}.getZ()-0.1)
+			{_e}.setRightLegPose({_RightLeg})
+			set name of gui item to "&fВращение &eправой ноги&f по Z: &a%{_RightLeg}.getZ()%"
+
+		make gui slot 27,28,29,30,31,32,33,34,35 with lime stained glass pane named " "
+		make gui slot 36 with {@pose_1}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(0,0,0))
+			{_e}.setRightLegPose(new EulerAngle(-0,0,-0))
+			{_e}.setLeftArmPose(new EulerAngle(-0,0,-0))
+			{_e}.setRightArmPose(new EulerAngle(-0,0,0))
+			{_e}.setBodyPose(new EulerAngle(0,-0,0))
+			{_e}.setHeadPose(new EulerAngle(-0,-0,0))
+			armorstandEditGui({_p}, {_e})
+		make gui slot 37 with {@pose_2}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(-0.03,0,-0.02))
+			{_e}.setRightLegPose(new EulerAngle(0.03,0,-0))
+			{_e}.setLeftArmPose(new EulerAngle(-2.5,-0.02,-0.1))
+			{_e}.setRightArmPose(new EulerAngle(-0.25,0.1,0.1))
+			{_e}.setBodyPose(new EulerAngle(0,-0,0))
+			{_e}.setHeadPose(new EulerAngle(-0.8,0,0))
+			armorstandEditGui({_p}, {_e})
+		make gui slot 38 with {@pose_3}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(-0.02,0,-0.02))
+			{_e}.setRightLegPose(new EulerAngle(0.02,0,0.02))
+			{_e}.setLeftArmPose(new EulerAngle(-0.17,-0.8,-0.7))
+			{_e}.setRightArmPose(new EulerAngle(-0.76,-0.73,0.07))
+			{_e}.setBodyPose(new EulerAngle(0,-0,0))
+			{_e}.setHeadPose(new EulerAngle(-0.02,-0.5,0))
+			armorstandEditGui({_p}, {_e})
+		make gui slot 39 with {@pose_4}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(0,0,0))
+			{_e}.setRightLegPose(new EulerAngle(-0,0,-0))
+			{_e}.setLeftArmPose(new EulerAngle(-0.76,0.1,-2.41))
+			{_e}.setRightArmPose(new EulerAngle(0.04,0,0.17))
+			{_e}.setBodyPose(new EulerAngle(0,0,0))
+			{_e}.setHeadPose(new EulerAngle(0,0,0))
+			armorstandEditGui({_p}, {_e})
+		make gui slot 40 with {@pose_5}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(0.55,0,-0.02))
+			{_e}.setRightLegPose(new EulerAngle(-0.68,0.1,0.02))
+			{_e}.setLeftArmPose(new EulerAngle(-1,-0,-0.17))
+			{_e}.setRightArmPose(new EulerAngle(1,0,0.17))
+			{_e}.setBodyPose(new EulerAngle(0,0.07,0))
+			{_e}.setHeadPose(new EulerAngle(0.01,-0.05,0))
+			armorstandEditGui({_p}, {_e})
+		make gui slot 41 with {@pose_6}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(-1.6,-0.15,-0.02))
+			{_e}.setRightLegPose(new EulerAngle(-1.6,0.15,0.02))
+			{_e}.setLeftArmPose(new EulerAngle(-0.17,0,-0.17))
+			{_e}.setRightArmPose(new EulerAngle(-0.26,0,0.17))
+			{_e}.setBodyPose(new EulerAngle(0,0.01,0))
+			{_e}.setHeadPose(new EulerAngle(0.06,-0.1,0))
+			armorstandEditGui({_p}, {_e})
+		make gui slot 42 with {@pose_7}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(0.14,0.3,-0.22))
+			{_e}.setRightLegPose(new EulerAngle(-0.02,0.37,0.32))
+			{_e}.setLeftArmPose(new EulerAngle(0.16,1.41,-2.54))
+			{_e}.setRightArmPose(new EulerAngle(-0.06,1.6,2.52))
+			{_e}.setBodyPose(new EulerAngle(0,0.06,0))
+			{_e}.setHeadPose(new EulerAngle(0.04,0.04,0))
+			armorstandEditGui({_p}, {_e})
+		make gui slot 43 with {@pose_8}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(-0.02,0,-0.02))
+			{_e}.setRightLegPose(new EulerAngle(0.02,0,0.02))
+			{_e}.setLeftArmPose(new EulerAngle(-0.7,-0.04,0.4))
+			{_e}.setRightArmPose(new EulerAngle(-0.95,-0.85,0.75))
+			{_e}.setBodyPose(new EulerAngle(0,0,0))
+			{_e}.setHeadPose(new EulerAngle(0.02,0.16,0.54))
+			armorstandEditGui({_p}, {_e})
+		make gui slot 44 with {@pose_9}:
+			{_e}.setArms(true)
+			{_e}.setLeftLegPose(new EulerAngle(0.3,0.45,-0.13))
+			{_e}.setRightLegPose(new EulerAngle(-0.2,0.35,0.4))
+			{_e}.setLeftArmPose(new EulerAngle(-1.47,-0.23,0.14))
+			{_e}.setRightArmPose(new EulerAngle(1.3,3.03,2.77))
+			{_e}.setBodyPose(new EulerAngle(0.04,0.17,0))
+			{_e}.setHeadPose(new EulerAngle(0.06,-0.05,0.26))
+			armorstandEditGui({_p}, {_e})
+	open last created gui to {_p}
+on rightclick on armor stand:
+	if player's gamemode is not spectator:
+		if player is sneaking:
+			cancel event
+			armorstandEditGui(player,clicked entity)
+		else if player's off hand item is not air:
+			if (clicked entity).getEquipment().getItemInOffHand() is air:
+				cancel event
+				(clicked entity).getEquipment().setItemInOffHand(1 of player's off hand item)
+				if player's gamemode is not creative or spectator:
+					remove 1 of player's off hand item from player's off hand item
+
+		#set {_e} to clicked entity
+		#broadcast "{_e}.setArms(%{_e}.hasArms()%)"
+		#set {_data} to {_e}.getLeftLegPose()
+		#broadcast "{_e}.setLeftLegPose(new EulerAngle(%{_data}.getX()%,%{_data}.getY()%,%{_data}.getZ()%))"
+		#set {_data} to {_e}.getRightLegPose()
+		#broadcast "{_e}.setRightLegPose(new EulerAngle(%{_data}.getX()%,%{_data}.getY()%,%{_data}.getZ()%))"
+		#set {_data} to {_e}.getLeftArmPose()
+		#broadcast "{_e}.setLeftArmPose(new EulerAngle(%{_data}.getX()%,%{_data}.getY()%,%{_data}.getZ()%))"
+		#set {_data} to {_e}.getRightArmPose()
+		#broadcast "{_e}.setRightArmPose(new EulerAngle(%{_data}.getX()%,%{_data}.getY()%,%{_data}.getZ()%))"
+		#set {_data} to {_e}.getBodyPose()
+		#broadcast "{_e}.setBodyPose(new EulerAngle(%{_data}.getX()%,%{_data}.getY()%,%{_data}.getZ()%))"
+		#set {_data} to {_e}.getHeadPose()
+		#broadcast "{_e}.setHeadPose(new EulerAngle(%{_data}.getX()%,%{_data}.getY()%,%{_data}.getZ()%))"
+		
