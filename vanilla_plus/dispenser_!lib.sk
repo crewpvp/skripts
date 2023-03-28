@@ -1,0 +1,575 @@
+import:
+	org.bukkit.attribute.Attributable
+	org.bukkit.entity.LivingEntity
+	org.bukkit.enchantments.Enchantment
+	org.bukkit.potion.PotionEffectType
+	org.bukkit.attribute.Attribute
+	org.bukkit.inventory.InventoryHolder
+	org.bukkit.block.BlockFace
+	org.bukkit.Material
+	org.bukkit.inventory.ItemStack
+	org.bukkit.Bukkit
+	ch.njol.skript.aliases.ItemType
+
+effect break %block% (with|by) %item% (with|for) %number% [(1¦and store drop in %-objects%)]:
+	trigger:
+		delay the effect
+		set {_type} to expr-1.getType()
+		loop expr-3 times:
+			play sound "%expr-1.getSoundGroup().getHitSound()%" in blocks category with volume 0.4 at expr-1
+			loop players in radius 15 around expr-1:
+				loop-value-2.sendBlockDamage(location of expr-1, loop-value-1/expr-3)
+			wait 1 ticks
+		loop players in radius 15 around expr-1:
+			loop-value-1.sendBlockDamage(location of expr-1, 0.1)
+
+		play sound "%expr-1.getSoundGroup().getBreakSound()%" in blocks category with volume 0.8 at expr-1
+		if expr-1 is not any shulker box:
+			set {_drops::*} to (...expr-1.getDrops(expr-2)),(items in inventory of expr-1)
+		else:
+			set {_drops::*} to ...expr-1.getDrops(expr-2)
+		#logBreak(expr-1)
+		if {_type} is expr-1.getType():
+			set block at expr-1 to air
+			set raw exprs-4 to {_drops::*} if parse mark is 1
+		continue
+function calcDamage(damage: number, entity: entity, type: text = "ENVIRONMENTAL") :: number:
+	# damage types:
+		#ENVIRONMENTAL
+		#EXPLOSIONS
+		#FALL
+		#FIRE
+		#PROJECTILE
+	set {_epf} to 0
+	set {_resistance} to 0
+	set {_points} to 0
+	set {_toughness} to 0
+	if {_entity} is instance of LivingEntity:
+		loop (helmet of {_entity}), (chestplate of {_entity}),(leggings of {_entity}), (boots of {_entity}):
+			if loop-value is not air:
+				add 1 to {_i}
+				set {_items::%{_i}%} to loop-value
+		if {_type} is not "FALL":
+			if {_type} is "ENVIRONMENTAL":
+				loop {_items::*}:
+					add loop-value.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) to {_epf}
+			else:
+				set {_enchantment} to Enchantment.getByName("PROTECTION_%{_type}%")
+				loop {_items::*}:
+					add loop-value.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) to {_epf}
+					add loop-value.getEnchantmentLevel({_enchantment})*2 to {_epf}
+		else:
+			loop {_items::*}:
+				add loop-value.getEnchantmentLevel(Enchantment.PROTECTION_FALL)*3 to {_epf}
+		
+
+		set {_effect} to {_entity}.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)
+		if {_effect} is set:
+			set {_resistance} to {_effect}.getAmplifier()
+	if {_type} is not "FALL":
+		if {_entity} is instance of Attributable:
+			set {_points} to {_entity}.getAttribute(Attribute.GENERIC_ARMOR).getValue()
+			set {_toughness} to {_entity}.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue()
+
+	set {_epf} to 1-(min({_epf},20)*0.04)
+	set {_resistance} to 1 - ({_resistance}*0.2)
+	set {_damage} to {_damage} * (1 - max({_points}/5,(({_points}- ((4*{_damage})/({_toughness}+8)))))/25)
+	set {_damage} to ({_damage} * {_epf}) * {_resistance}
+	return {_damage}
+function calcItemDamage(item: item) :: number:
+	if {_item} is stone sword:
+		set {_damage} to 5
+	else if {_item} is iron sword:
+		set {_damage} to 6
+	else if {_item} is diamond sword:
+		set {_damage} to 7
+	else if {_item} is netherite sword:
+		set {_damage} to 8
+	else:
+		set {_damage} to 4
+	set {_level} to level of sharpness of {_item}
+	if {_level} is set:
+		return {_damage}+({_level}*0.5)
+	return {_damage}
+function calcTime(item:item, block: block) :: number:
+	if {_item} is wood pickaxe or wood axe:
+		set {_time} to 2
+	else if {_item} is stone pickaxe or stone axe:
+		set {_time} to 4
+	else if {_item} is iron pickaxe or iron axe:
+		set {_time} to 6
+	else if {_item} is diamond pickaxe or diamond axe:
+		set {_time} to 8
+	else if {_item} is netherite pickaxe or netherite axe:
+		set {_time} to 9
+	else:
+		set {_time} to 12	
+	set {_level} to level of efficiency of {_item}
+	add ({_level}*{_level} + 1) to {_time}
+	set {_time} to ({_time}/{_block}.getType().getHardness())/30
+	if {_time} > 1:
+		return 0
+
+	return round up (1.75/{_time})
+function removeDurability(item: item) :: boolean:
+	set {_level} to level of unbreaking of {_item}
+	if {_level} is set:
+		if random number between 0 and 1 is less than ({_level}*2)/10:
+			return false
+	return true
+function removeDurabilityMult(item: item, amount: number) :: number:
+	set {_level} to level of unbreaking of {_item}
+	if {_level} is set:
+		loop {_amount} times:
+			if random number between 0 and 1 is less than ({_level}*2)/10:
+				remove 1 from {_amount}
+	return {_amount}
+
+
+function getCraft(block: block) :: object:
+	set {_recipe} to Bukkit.getCraftingRecipe(ItemType.getCopiedContents(inventory of {_block}),main world)
+	return {_recipe}.getResult() if {_recipe} is set
+	return {_}
+
+function getStackedItems(block: block) :: items:
+	loop all items in inventory of {_block}:
+		delete {_b}
+		loop {_items::*}:
+			set {_item} to loop-value-2
+			set {_type} to type of {_item}
+			if {_type} is type of loop-value-1:
+				set {_items::%loop-index%} to 1+({_item}.getAmount()) of {_type}
+				set {_b} to true
+				stop loop
+		if {_b} is not set:
+			add 1 to {_c}
+			set {_items::%{_c}%} to 1 of (type of loop-value)
+	return {_items::*}
+
+function getSameItems(items1: items, items2: items) :: items:
+	if {_items1::1} is not set:
+		return {_items2::*}
+	if {_items2::1} is not set:
+		return {_items1::*}
+	loop {_items2::*}:
+		if {_items1::*} contains type of loop-value:
+			add 1 to {_i}
+			set {_ret::%{_i}%} to type of loop-value
+	if {_ret::1} is set:
+		return {_ret::*}
+	return air
+
+function getCraftAmount(items1: items, items2: items) :: number:
+	loop {_items2::*}:
+		set {_item} to type of 1 of loop-value
+		set {_am::%{_item}%} to loop-value.getAmount()
+		set {_items::%{_item}%} to 0
+	loop {_items1::*}:
+		set {_item} to type of 1 of loop-value
+		if {_items::%{_item}%} is set:
+			add loop-value.getAmount() to {_items::%{_item}%}
+	set {_i} to 1
+	loop 576 times:
+		loop {_am::*}:
+			if {_items::%loop-index%} is less than {_i}*loop-value-2:
+				exit 2 loops
+		add 1 to {_i}
+	remove 1 from {_i}
+	return {_i}
+
+function pipe(block: block, facing: object, items: items) :: items:
+
+	set {_directions::*} to (BlockFace.WEST), (BlockFace.EAST), (BlockFace.NORTH), (BlockFace.SOUTH), (BlockFace.DOWN), (BlockFace.UP)
+	set {_rfacing} to {_facing}.getOppositeFace()
+	set {_start} to {_block}
+	loop 60000 times:
+		if {_block}.getType() is Material.LIGHTNING_ROD:
+			set {_irod} to {_block}
+			if {_block}.getBlockData().getFacing() is {_facing} or {_rfacing}:
+				set {_block} to {_block}.getRelative({_facing})
+			else:
+				delete {_block}
+
+		else if {_block}.getType() is Material.DISPENSER:
+			if {_start} is not {_block}:
+				if {_block}.getBlockData().getFacing() is not {_rfacing}:
+					if {_points::%{_block}%} is not set:
+						set {_points::%{_block}%} to true
+
+						add 1 to {_c}
+						add 1 to {_f}
+
+						set {_roads::%{_c}%::*} to ({_block}.getRelative(BlockFace.WEST)),({_block}.getRelative(BlockFace.EAST)),({_block}.getRelative(BlockFace.NORTH)),({_block}.getRelative(BlockFace.SOUTH)),({_block}.getRelative(BlockFace.DOWN)),({_block}.getRelative(BlockFace.UP))
+
+						set {_filterblock::%{_f}%} to {_block}
+						set {_filterroad::%{_c}%} to {_f}
+						
+						set {_facing} to {_block}.getBlockData().getFacing()
+						set {_rfacing} to {_facing}.getOppositeFace()
+						set {_block} to {_block}.getRelative({_facing})
+						remove ({_block}),({_irod}) from {_roads::%{_c}%::*}
+
+						#broadcast "[debug] c==%{_c}% f==%{_f}% disp [%items in inventory of {_filterblock::%{_f}%}%]"
+						continue
+			delete {_block}
+
+		else if {_block}.getType() is Material.DROPPER:
+
+			# найден дроппер, который нужен для выбрасывания предметов
+			if inventory of {_block} is empty:
+				# копируем его направление, находим блок перед ним
+				set {_vec} to {_block}.getBlockData().getFacing()
+				set {_dl} to {_block}.getRelative({_vec})	
+				set {_vec} to {_vec}.getDirection()
+				if {_f} is greater than 0:
+					set {_craftersAmount} to 1
+					delete {_craftersPointers::*}
+					delete {_filterItems::*}
+					delete {_copyOfItems::*}
+					# собираем количество крафтеров в цепи
+					# записываем индексы крафтеров в {_crafterPointers::*}
+					# собираем одинаковые предметы из фильтров последовательно
+					# {_filterItems::Номер Крафтера::Предметы фильтров до этого крафтера}
+
+					loop {_f} times:
+
+						if {_crafterresult::%loop-value-2%} is set:
+							set {_craftersPointers::%{_craftersAmount}%} to loop-value-2
+							add 1 to {_craftersAmount}
+						else:
+							delete {_i}
+							loop all items in inventory of {_filterblock::%loop-value-2%}:
+								add 1 to {_i}
+								set {_itemTypes::%{_i}%} to type of 1 of loop-value-3
+							#broadcast "[debug] compare on %{_c}%: [%{_filterItems::%{_craftersAmount}%::*}%] AND [%{_itemTypes::*}%]"
+							set {_filterItems::%{_craftersAmount}%::*} to getSameItems({_filterItems::%{_craftersAmount}%::*},{_itemTypes::*})
+							delete {_itemTypes::*}
+
+					if {_filterItems::%{_craftersAmount}%::*} is not set:
+						remove 1 from {_craftersAmount}
+					# Копируем исходные предметы во временный массив
+					#broadcast "[debug] filter items on road %{_c}% [%{_filterItems::%{_craftersAmount}%::*}%]"
+					loop {_items::*}:
+						set {_copyOfItems::%loop-index%} to {_items::%loop-index%}
+					
+					# пытаемся исключить предметы не попадающие под фильтры
+					loop {_craftersAmount} times:
+						
+						# если общие предметы только воздух - значит ни одного общего не найдено
+						if {_filterItems::%loop-value-2%::1} is air:
+							delete {_copyOfItems::*}
+							stop loop
+						# собираем новый временный массив содержащий только предметы из фильтров
+						# не попавшие под фильтр предметы записываем в {_copyOfItems::*}
+
+						if {_filterItems::%loop-value-2%::1} is set:
+							loop {_copyOfItems::*}:
+								if {_filterItems::%loop-value-2%::*} doesn't contain (type of (1 of loop-value-3)):
+									set {_items::%loop-index-1%} to {_copyOfItems::%loop-index-1%}
+									delete {_copyOfItems::%loop-index-1%}
+							if {_copyOfItems::*} is not set:
+								stop loop
+						# перебираем крафтеры, проверяем наличие крафтера в данной последовательности фильтров
+						if {_craftersPointers::%loop-value-2%} is set:
+							# проверяем что результат крафта есть
+							if {_crafterresult::%{_craftersPointers::%loop-value-2%}%} is not set:
+								stop loop
+							# получаем количество крафтов, которые мы можем создать из текущего списка
+							set {_craftedAmount} to getCraftAmount({_copyOfItems::*},{_crafterIngridients::%{_craftersPointers::%loop-value-2%}%::*})
+							if {_craftedAmount} is greater than 0:
+								loop {_crafteringridients::%{_craftersPointers::%loop-value-2%}%::*}:
+									# получаем абсолютное число созданных предметов
+									set {_absCraftedAmount} to {_craftedAmount}*loop-value-3.getAmount()
+									loop {_copyOfItems::*}:
+										if (type of (1 of loop-value-3)) is (type of (1 of loop-value-4)):
+											if loop-value-4.getAmount() is less than or equal to {_absCraftedAmount}:
+												remove loop-value-4.getAmount() from {_absCraftedAmount}
+												if loop-index-2 parsed as number is greater than 0:
+													add 1 to {_j}
+													set {_result::%{_j}%} to {_copyOfItems::%loop-index-2%}
+												delete {_items::%loop-index-2%}
+												delete {_copyOfItems::%loop-index-2%}
+											else:
+												if {_absCraftedAmount} is greater than 0:
+													{_copyOfItems::%loop-index-2%}.setAmount({_copyOfItems::%loop-index-2%}.getAmount()-{_absCraftedAmount})
+
+													if loop-index-2 parsed as number is greater than 0:
+														add 1 to {_j}
+														set {_result::%{_j}%} to {_absCraftedAmount} of {_copyOfItems::%loop-index-2%}
+													set {_items::%loop-index-2%} to {_copyOfItems::%loop-index-2%}
+											
+								remove 1 from {_craftedItemIndex}
+								set {_copyOfItems::%{_craftedItemIndex}%} to {_craftedAmount}*{_crafterresult::%{_craftersPointers::%loop-value-2%}%}.getAmount() of {_crafterresult::%{_craftersPointers::%loop-value-2%}%}
+						# в {_copyOfItems::*} теперь находятся предметы прошедшие через фильтры
+						# и предметы которые были скрафчены имеют отрицательный индекс	
+
+					if {_copyOfItems::*} is set:
+						play sound "minecraft:block.dispenser.dispense" at {_block}
+
+						loop {_copyOfItems::*}:
+							if loop-index parsed as number is greater than 0:
+								add 1 to {_j}
+								set {_result::%{_j}%} to loop-value-2
+							
+							set {_is} to new ItemStack(type of loop-value-2).getMaxStackSize()
+							set {_am} to loop-value-2.getAmount()
+							while {_is} is less than {_am}:
+								drop {_is} of loop-value-2 at {_dl} without velocity
+								push last dropped item {_vec} at speed 0.3
+								remove {_is} from {_am}
+							if {_am} is not 0:
+								drop {_am} of loop-value-2 at {_dl} without velocity
+								push last dropped item {_vec} at speed 0.3
+							delete {_items::%loop-index%}
+							delete {_copyOfItems::%loop-index%}
+					if {_filterroad::%{_c}%} is set:
+						#broadcast "[debug] delete filter/crafter %{_c}% %{_f}%"
+						if {_crafterResult::%{_filterroad::%{_c}%}%} is set:		
+							loop {_items::*}:
+								if loop-index parsed as number is less than 0:
+									if (1 of (type of loop-value-2)) is (1 of (type of {_crafterResult::%{_filterroad::%{_c}%}%})):
+										set {_is} to new ItemStack(type of loop-value-2).getMaxStackSize()
+										set {_am} to loop-value-2.getAmount()
+										while {_is} is less than {_am}:
+											drop {_is} of loop-value-2 at {_start} without velocity
+											remove {_is} from {_am}
+										if {_am} is not 0:
+											drop {_am} of loop-value-2 at {_start} without velocity
+										delete {_items::%loop-index%}
+										set {_restExists} to true
+							delete {_crafterResult::%{_filterroad::%{_c}%}%}
+
+						delete {_filterblock::%{_filterroad::%{_c}%}%}
+						delete {_filterroad::%{_c}%}
+						remove 1 from {_f}
+				else:
+					#broadcast "[debug] drop without checking"
+					loop {_items::*}:
+						if loop-index parsed as number is greater than 0:
+							add 1 to {_j}
+							set {_result::%{_j}%} to loop-value-2
+						#broadcast "[debug] drop %loop-value-2% at %location of {_dl}%"
+						drop loop-value-2 at {_dl} without velocity
+						push last dropped item {_vec} at speed 0.3
+						delete {_items::%loop-index%}
+				if {_items::*} is not set:
+					stop loop
+			# нашли крафтер
+			else if {_points::%{_block}%} is not set:
+				set {_points::%{_block}%} to true
+				
+				add 1 to {_c}
+				add 1 to {_f}
+				set {_filterroad::%{_c}%} to {_f}
+
+				set {_crafterresult::%{_f}%} to getCraft({_block})
+				set {_crafteringridients::%{_f}%::*} to getStackedItems({_block})
+
+				set {_facing} to {_block}.getBlockData().getFacing()
+				set {_rfacing} to {_facing}.getOppositeFace()								
+				set {_block} to {_block}.getRelative({_facing})				
+				
+				#broadcast "[debug] c==%{_c}% f==%{_f}% drop [%{_crafteringridients::%{_f}%::*}%]"
+				continue
+			delete {_block}
+		# нашли контейнер
+		else if {_block}.getState() is instance of InventoryHolder:
+			if {_block} is not any shulker box:
+
+				set {_vec} to {_block}.getBlockData().getFacing()
+				set {_dl} to {_block}.getRelative({_vec})	
+				set {_vec} to {_vec}.getDirection()
+				if {_f} is greater than 0:
+					set {_craftersAmount} to 1
+					delete {_craftersPointers::*}
+					delete {_filterItems::*}
+					delete {_copyOfItems::*}
+					# собираем количество крафтеров в цепи
+					# записываем индексы крафтеров в {_crafterPointers::*}
+					# собираем одинаковые предметы из фильтров последовательно
+					# {_filterItems::Номер Крафтера::Предметы фильтров до этого крафтера}
+
+					loop {_f} times:
+
+						if {_crafterresult::%loop-value-2%} is set:
+							set {_craftersPointers::%{_craftersAmount}%} to loop-value-2
+							add 1 to {_craftersAmount}
+						else:
+							delete {_i}
+							loop all items in inventory of {_filterblock::%loop-value-2%}:
+								add 1 to {_i}
+								set {_itemTypes::%{_i}%} to type of 1 of loop-value-3
+							#broadcast "[debug] compare on %{_c}%: [%{_filterItems::%{_craftersAmount}%::*}%] AND [%{_itemTypes::*}%]"
+							set {_filterItems::%{_craftersAmount}%::*} to getSameItems({_filterItems::%{_craftersAmount}%::*},{_itemTypes::*})
+							delete {_itemTypes::*}
+
+					if {_filterItems::%{_craftersAmount}%::*} is not set:
+						remove 1 from {_craftersAmount}
+					# Копируем исходные предметы во временный массив
+					#broadcast "[debug] filter items on road %{_c}% [%{_filterItems::%{_craftersAmount}%::*}%]"
+					loop {_items::*}:
+						set {_copyOfItems::%loop-index%} to {_items::%loop-index%}
+					
+					# пытаемся исключить предметы не попадающие под фильтры
+					loop {_craftersAmount} times:
+						
+						# если общие предметы только воздух - значит ни одного общего не найдено
+						if {_filterItems::%loop-value-2%::1} is air:
+							delete {_copyOfItems::*}
+							stop loop
+						# собираем новый временный массив содержащий только предметы из фильтров
+						# не попавшие под фильтр предметы записываем в {_copyOfItems::*}
+
+						if {_filterItems::%loop-value-2%::1} is set:
+							loop {_copyOfItems::*}:
+								if {_filterItems::%loop-value-2%::*} doesn't contain (type of (1 of loop-value-3)):
+									set {_items::%loop-index-1%} to {_copyOfItems::%loop-index-1%}
+									delete {_copyOfItems::%loop-index-1%}
+							if {_copyOfItems::*} is not set:
+								stop loop
+						# перебираем крафтеры, проверяем наличие крафтера в данной последовательности фильтров
+						if {_craftersPointers::%loop-value-2%} is set:
+							# проверяем что результат крафта есть
+							if {_crafterresult::%{_craftersPointers::%loop-value-2%}%} is not set:
+								stop loop
+							# получаем количество крафтов, которые мы можем создать из текущего списка
+							set {_craftedAmount} to getCraftAmount({_copyOfItems::*},{_crafterIngridients::%{_craftersPointers::%loop-value-2%}%::*})
+							if {_craftedAmount} is greater than 0:
+								loop {_crafteringridients::%{_craftersPointers::%loop-value-2%}%::*}:
+									# получаем абсолютное число созданных предметов
+									set {_absCraftedAmount} to {_craftedAmount}*loop-value-3.getAmount()
+									loop {_copyOfItems::*}:
+										if (type of (1 of loop-value-3)) is (type of (1 of loop-value-4)):
+											if loop-value-4.getAmount() is less than or equal to {_absCraftedAmount}:
+												remove loop-value-4.getAmount() from {_absCraftedAmount}
+												if loop-index-2 parsed as number is greater than 0:
+													add 1 to {_j}
+													set {_result::%{_j}%} to {_copyOfItems::%loop-index-2%}
+												delete {_items::%loop-index-2%}
+												delete {_copyOfItems::%loop-index-2%}
+											else:
+												if {_absCraftedAmount} is greater than 0:
+													{_copyOfItems::%loop-index-2%}.setAmount({_copyOfItems::%loop-index-2%}.getAmount()-{_absCraftedAmount})
+
+													if loop-index-2 parsed as number is greater than 0:
+														add 1 to {_j}
+														set {_result::%{_j}%} to {_absCraftedAmount} of {_copyOfItems::%loop-index-2%}
+													set {_items::%loop-index-2%} to {_copyOfItems::%loop-index-2%}
+											
+								remove 1 from {_craftedItemIndex}
+								set {_copyOfItems::%{_craftedItemIndex}%} to {_craftedAmount}*{_crafterresult::%{_craftersPointers::%loop-value-2%}%}.getAmount() of {_crafterresult::%{_craftersPointers::%loop-value-2%}%}
+						# в {_copyOfItems::*} теперь находятся предметы прошедшие через фильтры
+						# и предметы которые были скрафчены имеют отрицательный индекс	
+
+					loop {_copyOfItems::*}:					
+						set {_is} to new ItemStack(type of loop-value-2).getMaxStackSize()
+						set {_am} to loop-value-2.getAmount()
+						set {_ra} to 0
+						while {_is} is less than {_am}:
+							if inventory of {_block} have space for {_is} of loop-value-2:
+								add {_is} of loop-value-2 to inventory of {_block}
+								remove {_is} from {_am}
+								add {_is} to {_ra}
+								
+							else:
+								set {_items::%loop-index%} to {_am} of loop-value-2
+								stop loop
+						if {_am} is not 0:
+							if inventory of {_block} have space for {_am} of loop-value-2:
+								add {_am} of loop-value-2 to inventory of {_block}
+								delete {_items::%loop-index%}
+								delete {_copyOfItems::%loop-index%}
+								if loop-index parsed as number is greater than 0:
+									add 1 to {_j}
+									set {_result::%{_j}%} to {_am} of loop-value-2
+							else:
+								set {_items::%loop-index%} to {_am} of loop-value-2
+						else:
+							delete {_items::%loop-index%}
+							delete {_copyOfItems::%loop-index%}
+				else:
+					loop {_items::*}:
+						if inventory of {_block} have space for loop-value-2:
+							add loop-value-2 to inventory of {_block}
+							if loop-index parsed as number is greater than 0:
+								add 1 to {_j}
+								set {_result::%{_j}%} to loop-value-2
+							delete {_items::%loop-index%}
+				if {_filterroad::%{_c}%} is set:
+					#broadcast "[debug] delete filter/crafter %{_c}% %{_f}%"
+					if {_crafterResult::%{_filterroad::%{_c}%}%} is set:		
+						loop {_items::*}:
+							if loop-index parsed as number is less than 0:
+								if (1 of (type of loop-value-2)) is (1 of (type of {_crafterResult::%{_filterroad::%{_c}%}%})):
+									set {_is} to new ItemStack(type of loop-value-2).getMaxStackSize()
+									set {_am} to loop-value-2.getAmount()
+									while {_is} is less than {_am}:
+										drop {_is} of loop-value-2 at {_start} without velocity
+										remove {_is} from {_am}
+									if {_am} is not 0:
+										drop {_am} of loop-value-2 at {_start} without velocity
+									delete {_items::%loop-index%}
+									set {_restExists} to true
+						delete {_crafterResult::%{_filterroad::%{_c}%}%}
+
+					delete {_filterblock::%{_filterroad::%{_c}%}%}
+					delete {_filterroad::%{_c}%}
+					remove 1 from {_f}
+			if {_items::*} is not set:	
+				stop loop
+			delete {_block}
+			
+
+		# нашли поворот
+		else if {_block} is copper block or cut copper block or waxed copper block or waxed cut copper block:
+			if {_points::%{_block}%} is not set:
+				set {_points::%{_block}%} to true
+				add 1 to {_c}
+				
+				set {_roads::%{_c}%::*} to ({_block}.getRelative(BlockFace.WEST)),({_block}.getRelative(BlockFace.EAST)),({_block}.getRelative(BlockFace.NORTH)),({_block}.getRelative(BlockFace.SOUTH)),({_block}.getRelative(BlockFace.DOWN)),({_block}.getRelative(BlockFace.UP))
+				remove {_irod} from {_roads::%{_c}%::*}
+
+				#broadcast "[debug] c==%{_c}% copper"
+			delete {_block}
+		# если цепочка была закончена
+		else:
+			if {_roads::%{_c}%::*} is not set:
+				#broadcast "[debug] return from road %{_c}%"
+				remove 1 from {_c}
+				
+				if {_filterroad::%{_c}%} is set:
+					#broadcast "[debug] delete filter/crafter %{_c}% %{_f}%"
+					if {_crafterResult::%{_filterroad::%{_c}%}%} is set:		
+						loop {_items::*}:
+							if loop-index parsed as number is less than 0:
+								if (1 of (type of loop-value-2)) is (1 of (type of {_crafterResult::%{_filterroad::%{_c}%}%})):
+									set {_is} to new ItemStack(type of loop-value-2).getMaxStackSize()
+									set {_am} to loop-value-2.getAmount()
+									while {_is} is less than {_am}:
+										drop {_is} of loop-value-2 at {_start} without velocity
+										remove {_is} from {_am}
+									if {_am} is not 0:
+										drop {_am} of loop-value-2 at {_start} without velocity
+									delete {_items::%loop-index%}
+									set {_restExists} to true
+						delete {_crafterResult::%{_filterroad::%{_c}%}%}
+
+					delete {_filterblock::%{_filterroad::%{_c}%}%}
+					delete {_filterroad::%{_c}%}
+					remove 1 from {_f}
+
+			if {_c} is less than 1:
+				stop loop
+
+			loop {_roads::%{_c}%::*}:
+				set {_block} to loop-value-2
+				delete {_roads::%{_c}%::%loop-index%}
+				set {_facing} to {_directions::%loop-index%}
+				set {_rfacing} to {_facing}.getOppositeFace()
+				if {_block}.getType() is Material.LIGHTNING_ROD:
+					if {_block}.getBlockData().getFacing() is {_facing} or {_rfacing}:
+						stop loop
+
+	if {_restExists} is true:
+		play sound "minecraft:block.iron_trapdoor.close" with volume 1 and pitch 0.5 at {_start}
+	return {_result::*} 
