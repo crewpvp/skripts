@@ -1,0 +1,43 @@
+import:
+	org.bukkit.block.BlockFace
+
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item is hopper
+	cancel event
+	set {_am} to sqrt((amount of hoppers in inventory of event-block + 1)/3.14)
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_block} to event-block.getRelative({_facing})
+	if BlockFace.UP,BlockFace.DOWN contains {_facing}:
+		loop all dropped items in radius {_am} around {_block}:
+			if (y coord of loop-value) is between (y coord of {_block}-0.5) and (y coord of {_block}+0.5):
+				add 1 to {_i}
+				set {_ents::%{_i}%} to loop-value
+				set {_items::%{_i}%} to loop-value.getItemStack()
+			if {_i} is greater than 10:
+				stop loop
+	else if BlockFace.EAST,BlockFace.WEST contains {_facing}:
+		loop all dropped items in radius {_am} around {_block}:
+			if (x coord of loop-value) is between (x coord of {_block}+0.5) and (x coord of {_block}-0.5):
+				add 1 to {_i}
+				set {_ents::%{_i}%} to loop-value
+				set {_items::%{_i}%} to loop-value.getItemStack()
+			if {_i} is greater than 10:
+				stop loop
+	else if BlockFace.NORTH,BlockFace.SOUTH contains {_facing}:
+		loop all dropped items in radius {_am} around {_block}:
+			if (z coord of loop-value) is between (z coord of {_block}+0.5) and (z coord of {_block}-0.5):
+				add 1 to {_i}
+				set {_ents::%{_i}%} to loop-value
+				set {_items::%{_i}%} to loop-value.getItemStack()
+			if {_i} is greater than 10:
+				stop loop
+	set {_rfacing} to {_facing}.getOppositeFace()
+	set {_removed::*} to pipe(event-block.getRelative({_rfacing}),{_rfacing},{_items::*})
+	loop {_items::*}:
+		loop {_removed::*}:
+			if loop-value-1 is loop-value-2:
+				{_ents::%loop-index-1%}.remove()
+				delete {_removed::%loop-index-2%}
+				stop loop

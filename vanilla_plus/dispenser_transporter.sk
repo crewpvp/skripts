@@ -1,0 +1,9 @@
+on dispense with priority LOWEST:
+	event-block is dispenser
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_block} to event-block.getRelative({_facing})
+	{_block} is lightning rod
+	cancel event
+	wait 1 tick
+	inventory of event-block is not empty
+	remove pipe({_block},{_facing},items in inventory of event-block) from inventory of event-block

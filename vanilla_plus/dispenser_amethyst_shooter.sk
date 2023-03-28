@@ -1,0 +1,109 @@
+import:
+	org.bukkit.Material
+	
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item is amethyst shard
+	cancel event
+	{-dispensers::active::%location of event-block%} is not set
+	set {-dispensers::active::%location of event-block%} to true
+	set {_loc} to location of event-block
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_vector} to {_facing}.getDirection()
+	set {_amount} to (amount of amethyst shard in inventory of event-block)+1
+	loop {_amount}/3 times:
+		if (block at ({_loc} ~ {_vector})).isPassable() is true:
+			stop loop
+		set {_loc} to {_loc} ~ {_vector}
+		remove 3 from {_amount}
+	if {_amount} is less than 3:
+		stop
+
+	set {_radius} to round ((sqrt({_amount}/3))/2)
+	set {_center} to {_loc}
+	
+	
+	if {_vector}.getX() is 0:
+		add 1 to {_i}
+		set {_dir::%{_i}%} to vector(1,0,0)
+		add 1 to {_i}
+		set {_dir::%{_i}%} to vector(-1,0,0)
+	if {_vector}.getY() is 0:
+		add 1 to {_i}
+		set {_dir::%{_i}%} to vector(0,1,0)
+		add 1 to {_i}
+		set {_dir::%{_i}%} to vector(0,-1,0)
+	if {_vector}.getZ() is 0:
+		add 1 to {_i}
+		set {_dir::%{_i}%} to vector(0,0,1)
+		add 1 to {_i}
+		set {_dir::%{_i}%} to vector(0,0,-1)
+
+	
+
+	if (block at {_loc}).isPassable() is false:
+		set {_check} to {_loc} ~ {_vector}
+		if (block at {_check}).isPassable() is true:
+			add 1 to {_j}
+			set {_blocks::%{_j}%} to {_check}
+
+	set {_offset::1} to {_center}
+	set {_offset::2} to {_center}
+	set {_offset2::3} to {_center}
+	set {_offset2::4} to {_center}
+	loop {_radius} times:
+
+		loop {_offset::*}:
+			set {_offset::%loop-index%} to ({_offset::%loop-index%} ~ {_dir::%loop-index%})
+			if (block at {_offset::%loop-index%}).isPassable() is false:
+				set {_check} to {_offset::%loop-index%} ~ {_vector}
+				if (block at {_check}).isPassable() is true:
+					add 1 to {_j}
+					set {_blocks::%{_j}%} to {_check}
+			
+			set {_ofs::3} to {_offset::%loop-index%}
+			set {_ofs::4} to {_offset::%loop-index%}
+			loop {_radius}-loop-value-1 times:
+				loop {_ofs::*}:
+					set {_ofs::%loop-index-2%} to ({_ofs::%loop-index-2%} ~ {_dir::%loop-index-2%})
+					if (block at {_ofs::%loop-index-2%}).isPassable() is false:
+						set {_check} to {_ofs::%loop-index-2%} ~ {_vector}
+						if (block at {_check}).isPassable() is true:
+							add 1 to {_j}
+							set {_blocks::%{_j}%} to {_check}
+				
+		loop {_offset2::*}:
+			set {_offset2::%loop-index%} to ({_offset2::%loop-index%} ~ {_dir::%loop-index%})
+			if (block at {_offset2::%loop-index%}).isPassable() is false:
+				set {_check} to {_offset2::%loop-index%} ~ {_vector}
+				if (block at {_check}).isPassable() is true:
+					add 1 to {_j}
+					set {_blocks::%{_j}%} to {_check}
+	set {_amethist::1} to (Material.SMALL_AMETHYST_BUD).createBlockData()
+	{_amethist::1}.setFacing({_facing})
+	set {_amethist::2} to (Material.MEDIUM_AMETHYST_BUD).createBlockData()
+	{_amethist::2}.setFacing({_facing})
+	set {_amethist::3} to (Material.LARGE_AMETHYST_BUD).createBlockData()
+	{_amethist::3}.setFacing({_facing})
+	set {_amethist::4} to (Material.AMETHYST_CLUSTER).createBlockData()
+	{_amethist::4}.setFacing({_facing})
+	set {_amethist::5} to {_amethist::3}
+	set {_amethist::6} to {_amethist::2}
+	set {_amethist::7} to {_amethist::1}
+
+	set {_players::*} to all players in radius 30 around {_center} 
+	loop {_blocks::*}:
+		loop all entities in radius 0.8 around loop-value:
+			damage loop-entity by 0.5 hearts
+	loop {_amethist::*}:
+		loop {_blocks::*}:
+			loop {_players::*}:
+				loop-value-3.sendBlockChange(loop-value-2,loop-value-1)
+		play sound "minecraft:block.medium_amethyst_bud.place" at {_center}
+		wait 4 ticks
+	loop {_blocks::*}:
+		loop {_players::*}: 
+			loop-value-2.sendBlockChange(loop-value-1,(block at loop-value-1).getBlockData())
+	wait 4 ticks
+	delete {-dispensers::active::%location of event-block%}
