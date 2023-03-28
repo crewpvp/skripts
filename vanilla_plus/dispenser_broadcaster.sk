@@ -1,0 +1,20 @@
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item is written book
+	cancel event
+	{-dispensers::active::%location of event-block%} is not set
+	set {-dispensers::active::%location of event-block%} to true
+	set {_name} to book name of event-item
+	set {_author} to book author of event-item
+	set {_content} to book page 1 of event-item
+	replace all "<c:" with "<suggest command:" in {_content}
+	replace all "<t:" with "<tooltip:" in {_content}
+	replace all "<l:" with "<link:" in {_content}
+	set {_content} to regex replace "(?i)(?=##[0-9a-f]{6})" with "<" in {_content}
+	set {_content} to regex replace "(?i)(?<=##[0-9a-f]{6})" with ">" in {_content}
+	set {_message} to "<tooltip: &fАвтор книги: &a%{_author}%> %{_name}% &7›<reset> %colored {_content}%"
+	loop all players in radius 15 around event-block:
+		send formatted {_message} to loop-player
+	wait 3 seconds
+	delete {-dispensers::active::%location of event-block%} 

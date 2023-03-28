@@ -1,0 +1,32 @@
+import:
+	org.bukkit.Material
+
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item is redstone
+	cancel event
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_block} to event-block.getRelative({_facing})
+	set {_dir} to {_facing}.getDirection() // vector(4,4,4)
+	loop (amount of redstone in inventory of event-block+1)/2 times:
+		if {_block}.getType() is Material.TARGET:
+			stop loop
+		lerp 8 of dust using dustOption(red, 1.2) at {_block} with offset {_dir}
+		set {_block} to {_block}.getRelative({_facing})
+	
+	set {_bd} to {_block}.getBlockData()
+	set {_pr} to {_bd}.getPower()
+	if {_pr} is 0:
+		{_bd}.setPower(15.intValue())
+		{_block}.setBlockData({_bd})
+		wait 1 tick
+		loop 30 times:
+			if event-block.getBlockData().isTriggered() is false:
+				stop loop
+			if {_block}.getType() is Material.TARGET:
+				{_block}.setBlockData({_bd})
+			wait 1 tick
+		{_bd}.setPower({_pr})
+		if {_block}.getType() is Material.TARGET:
+			{_block}.setBlockData({_bd})
