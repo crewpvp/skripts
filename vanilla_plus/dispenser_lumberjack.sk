@@ -1,0 +1,124 @@
+import:
+	org.bukkit.Material
+	org.bukkit.inventory.ItemStack
+
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item is any axe
+	cancel event
+	{-dispensers::active::%location of event-block%} is not set
+
+	set {-dispensers::active::%location of event-block%} to true
+	
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_block} to event-block.getRelative({_facing})
+
+	set {_type} to {_block}.getType()
+	set {_time} to calcTime(event-item, {_block})
+	if {_type} is Material.OAK_LOG:
+		set {_allowdown} to false
+		set {_types::*} to Material.OAK_LOG
+		loop blocks above {_block}:
+			if loop-block is oak leaves:
+				set {_tree} to oak sapling
+				stop loop
+			else if loop-block is azalea leaves or flowering azalea leaves:
+				set {_tree} to random element of (azalea, flowering azalea)
+				stop loop
+	else if {_type} is Material.MANGROVE_ROOTS:
+		set {_allowdown} to true
+		set {_types::*} to (Material.MANGROVE_ROOTS),(Material.MANGROVE_LOG),(Material.MUDDY_MANGROVE_ROOTS)
+		set {_tree} to mangrove propagule
+	else if {_type} is Material.CRIMSON_STEM:
+		set {_allowdown} to true
+		set {_types::*} to (Material.CRIMSON_STEM),(Material.NETHER_WART_BLOCK),(Material.SHROOMLIGHT)
+		loop blocks above event-block:
+			if loop-block is nether wart block:
+				set {_tree} to crimson fungus
+				stop loop
+	else if {_type} is Material.WARPED_STEM:
+		set {_allowdown} to true
+		set {_types::*} to (Material.WARPED_STEM),(Material.WARPED_WART_BLOCK),(Material.SHROOMLIGHT)
+		loop blocks above event-block:
+			if loop-block is warped wart block:
+				set {_tree} to warped fungus
+				stop loop
+	else if {_type} is Material.DARK_OAK_LOG:
+		set {_allowdown} to false
+		set {_types::*} to Material.DARK_OAK_LOG
+		loop blocks above event-block:
+			if loop-block is dark oak leaves:
+				set {_tree} to dark oak sapling
+				stop loop
+	else if {_type} is Material.BIRCH_LOG:
+		set {_allowdown} to false
+		set {_types::*} to Material.BIRCH_LOG
+		loop blocks above event-block:
+			if loop-block is birch leaves:
+				set {_tree} to birch sapling
+				stop loop
+	else if {_type} is Material.SPRUCE_LOG:
+		set {_allowdown} to false
+		set {_types::*} to Material.SPRUCE_LOG
+		loop blocks above event-block:
+			if loop-block is spruce leaves:
+				set {_tree} to spruce sapling
+				stop loop
+	else if {_type} is Material.JUNGLE_LOG:
+		set {_allowdown} to false
+		set {_types::*} to Material.JUNGLE_LOG
+		loop blocks above event-block:
+			if loop-block is jungle leaves:
+				set {_tree} to jungle sapling
+				stop loop
+	else if {_type} is Material.ACACIA_LOG:
+		set {_allowdown} to false
+		set {_types::*} to Material.ACACIA_LOG
+		loop blocks above event-block:
+			if loop-block is acacia leaves:
+				set {_tree} to acacia sapling
+				stop loop
+	if {_tree} is set:
+		wait 1 tick
+
+		loop blocks in radius 1.8 around {_block}:
+			if (y coord of {_block}) is (y coord of loop-block):
+				if {_types::*} contains loop-block.getType():
+					if (block under loop-block) is grass or dirt or podzol:
+						break loop-block by event-item for {_time} and store drop in {_drops::*}
+						drop {_drops::*} at {_block} without velocity
+						set block at loop-block to {_tree}
+						loop all items in inventory of event-block:
+							if type of loop-item is type of event-item:
+								if removeDurability(loop-item) is true:
+									add 1 to durability of loop-item
+									if durability of loop-item is greater than max durability of loop-item:
+										remove loop-item from inventory of event-block
+								stop loop
+						add 1 to {_c}
+		if block under {_block} is grass or dirt or podzol or warped nylium or crimson nylium:
+			set block at {_block} to {_tree}
+		add 1 to {_c}
+		set {_blocks::%{_c}%} to location of {_block}
+		while {_blocks::*} is set:
+			loop {_blocks::*}:
+				delete {_blocks::%loop-index%}
+				loop blocks in radius 1.8 around loop-value:
+					if {_types::*} contains loop-block.getType():
+						if {_allowdown} is false:
+							if (y coord of loop-block) is less than (y coord of loop-value-1):
+								continue
+						add 1 to {_c}
+						set {_blocks::%{_c}%} to location of loop-block
+						break loop-block by event-item for {_time} and store drop in {_drops::*}
+						drop {_drops::*} at {_block} without velocity
+						loop all items in inventory of event-block:
+							if type of loop-item is type of event-item:
+								if removeDurability(loop-item) is true:
+									add 1 to durability of loop-item
+									if durability of loop-item is greater than max durability of loop-item:
+										remove loop-item from inventory of event-block
+								stop loop
+							
+	delete {-dispensers::active::%location of event-block%}
