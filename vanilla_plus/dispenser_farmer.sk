@@ -1,0 +1,58 @@
+import:
+	org.bukkit.Material
+	org.bukkit.inventory.ItemStack
+
+on load:
+	set {-dispensers::farmer::types::WHEAT} to Material.WHEAT
+	set {-dispensers::farmer::type::WHEAT::raw} to Material.WHEAT.createBlockData()
+
+	set {-dispensers::farmer::types::POTATOES} to Material.POTATO
+	set {-dispensers::farmer::type::POTATOES::raw} to Material.POTATOES.createBlockData()
+
+	set {-dispensers::farmer::types::SWEET_BERRY_BUSH} to Material.SWEET_BERRIES
+	set {-dispensers::farmer::type::SWEET_BERRY_BUSH::raw} to Material.SWEET_BERRY_BUSH.createBlockData()
+	{-dispensers::farmer::type::SWEET_BERRY_BUSH::raw}.setAge(1)
+
+	set {-dispensers::farmer::types::BEETROOTS} to Material.BEETROOT
+	set {-dispensers::farmer::type::BEETROOTS::raw} to Material.BEETROOTS.createBlockData()
+
+	set {-dispensers::farmer::types::NETHER_WART} to Material.NETHER_WART
+	set {-dispensers::farmer::type::NETHER_WART::raw} to Material.NETHER_WART.createBlockData()
+
+	set {-dispensers::farmer::types::CARROTS} to Material.CARROT
+	set {-dispensers::farmer::type::CARROTS::raw} to Material.CARROTS.createBlockData()
+
+on dispense:
+	event is not cancelled
+	event-block is dispenser
+	event-item is any hoe
+	cancel event
+	set {_facing} to event-block.getBlockData().getFacing()
+	set {_block} to event-block.getRelative({_facing})
+	set {_blocks::*} to {_block}
+	set {_locations::1} to location of {_block}
+	set {_bindex} to 2
+	loop 22 times:
+		loop {_blocks::*}:
+			set {_type} to loop-value-2.getType().toString()
+			if {-dispensers::farmer::types::%{_type}%} is set:
+				set {_blockData} to loop-value-2.getBlockData()
+				if {_blockData}.getAge() is {_blockData}.getMaximumAge():
+					add 1 to {_drops::%{_type}%}
+					loop-value-2.setBlockData({-dispensers::farmer::type::%{_type}%::raw})
+					loop (vector 1,0,0),(vector -1,0,0),(vector 0,0,1),(vector 0,0,-1):
+						set {_loc} to location of loop-value-2 ~ loop-value-3
+						if {_locations::*} doesn't contain {_loc}:
+							set {_blocks::%{_bindex}%} to block at {_loc}
+							set {_locations::%{_bindex}%} to {_loc}
+							add 1 to {_bindex}
+			delete {_blocks::%loop-index-1%}
+	loop {_drops::*}:
+		drop new ItemStack({-dispensers::farmer::types::%loop-index%},round (loop-value*random number between 1 and 3)) at {_block}
+	wait 1 tick
+	loop all items in inventory of event-block:
+		if loop-item is any hoe:
+			add removeDurabilityMult(loop-item, {_amount}) to durability of loop-item
+			if durability of loop-item is greater than max durability of loop-item:
+				remove loop-item from inventory of event-block
+			stop loop
