@@ -3,7 +3,7 @@ import:
 	org.bukkit.event.entity.EntityUnleashEvent$UnleashReason
 
 on rightclick on monsters or villager:
-	if event-entity is not ender dragon or wither or warden:
+	if event-entity is not (ender dragon) or (wither) or (warden):
 		if event-entity.isLeashed() is false:
 			if player's held item is lead:
 				event-entity.setLeashHolder(player)

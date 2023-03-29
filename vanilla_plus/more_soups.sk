@@ -5,13 +5,13 @@ import:
 	org.bukkit.Material
 
 on load:
-	set {_def::*} to bowl, brown mushroom, red mushroom
+	set {_def::*} to (bowl), (brown mushroom), (red mushroom)
 
-	set {_choice} to material choice of white tulip, pink tulip, orange tulip, red tulip
+	set {_choice} to material choice of (white tulip), (pink tulip), (orange tulip), (red tulip)
 	set {_name} to "strength_soup"
 	set {_addict} to 120
 	set {_deftime} to 120
-	set {_ingridients::*} to {_def::*},{_choice},{_choice}
+	set {_ingridients::*} to ({_def::*}),({_choice}),({_choice})
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -25,7 +25,7 @@ on load:
 	set {_name} to "dolphin_grace_soup"
 	set {_addict} to 120
 	set {_deftime} to 120
-	set {_ingridients::*} to {_def::*},{_choice}
+	set {_ingridients::*} to ({_def::*}),({_choice})
 	loop 5 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -39,7 +39,7 @@ on load:
 	set {_name} to "water_breath_soup"
 	set {_addict} to 120
 	set {_deftime} to 120
-	set {_ingridients::*} to {_def::*},{_choice}
+	set {_ingridients::*} to ({_def::*}),({_choice})
 	loop 5 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -63,11 +63,11 @@ on load:
 		register new shapeless recipe for {_item} using {_ingridients::*} with id "%{_name}%_%loop-value%"
 		add {_choice} to {_ingridients::*}
 
-	set {_choice} to material choice of diamond, emerald
+	set {_choice} to material choice of (diamond), (emerald)
 	set {_name} to "luck_soup"
 	set {_addict} to 180
 	set {_deftime} to 180
-	set {_ingridients::*} to {_def::*}, cornflower, Lily of the Valley
+	set {_ingridients::*} to ({_def::*}), (cornflower), (Lily of the Valley)
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -81,7 +81,7 @@ on load:
 	set {_name} to "health_boost_soup"
 	set {_addict} to 360
 	set {_deftime} to 180
-	set {_ingridients::*} to {_def::*}, Oxeye Daisy, Dandelion
+	set {_ingridients::*} to ({_def::*}), (Oxeye Daisy), (Dandelion)
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -91,11 +91,11 @@ on load:
 		register new shapeless recipe for {_item} using {_ingridients::*} with id "%{_name}%_%loop-value%"
 		add {_choice} to {_ingridients::*}
 
-	set {_choice} to material choice of Lily of the Valley, Blue Orchid 
+	set {_choice} to material choice of (Lily of the Valley), (Blue Orchid) 
 	set {_name} to "haste_soup"
 	set {_addict} to 240
 	set {_deftime} to 180
-	set {_ingridients::*} to {_def::*}, Lily of the Valley, Blue Orchid
+	set {_ingridients::*} to ({_def::*}), (Lily of the Valley), (Blue Orchid)
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -105,11 +105,11 @@ on load:
 		register new shapeless recipe for {_item} using {_ingridients::*} with id "%{_name}%_%loop-value%"
 		add {_choice} to {_ingridients::*}
 
-	set {_choice} to material choice of Lily of the Valley, Blue Orchid 
+	set {_choice} to material choice of (Lily of the Valley), (Blue Orchid) 
 	set {_name} to "instant_health_soup"
 	set {_addict} to 1
 	set {_deftime} to 1
-	set {_ingridients::*} to {_def::*}, Wither Rose, Ghast Tear
+	set {_ingridients::*} to {_def::*}, (Wither Rose), (Ghast Tear)
 	
 	set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 	set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -136,7 +136,7 @@ on load:
 	set {_name} to "night_vision_soup"
 	set {_addict} to 100
 	set {_deftime} to 100
-	set {_ingridients::*} to {_def::*}, {_choice}, {_choice}
+	set {_ingridients::*} to ({_def::*}), ({_choice}), ({_choice})
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -150,7 +150,7 @@ on load:
 	set {_name} to "regeneration_soup"
 	set {_addict} to 160
 	set {_deftime} to 160
-	set {_ingridients::*} to {_def::*}, {_choice}, {_choice}
+	set {_ingridients::*} to ({_def::*}), ({_choice}), ({_choice})
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -164,7 +164,7 @@ on load:
 	set {_name} to "poison_soup"
 	set {_addict} to 240
 	set {_deftime} to 240
-	set {_ingridients::*} to {_def::*}, {_choice}, {_choice}
+	set {_ingridients::*} to ({_def::*}), ({_choice}), ({_choice})
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -174,11 +174,11 @@ on load:
 		register new shapeless recipe for {_item} using {_ingridients::*} with id "%{_name}%_%loop-value%"
 		add {_choice} to {_ingridients::*}
 
-	set {_choice} to cornflower #material choice of
+	set {_choice} to cornflower
 	set {_name} to "jump_boost_soup"
 	set {_addict} to 120
 	set {_deftime} to 120
-	set {_ingridients::*} to {_def::*}, {_choice}, {_choice}
+	set {_ingridients::*} to ({_def::*}), ({_choice}), ({_choice})
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -189,11 +189,11 @@ on load:
 		add {_choice} to {_ingridients::*}
 
 
-	set {_choice} to material choice of Dandelion, blue Orchid
+	set {_choice} to material choice of (Dandelion), (blue Orchid)
 	set {_name} to "saturation_soup"
 	set {_addict} to 7
 	set {_deftime} to 7
-	set {_ingridients::*} to {_def::*}, {_choice}, {_choice}
+	set {_ingridients::*} to ({_def::*}), ({_choice}), ({_choice})
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -207,7 +207,7 @@ on load:
 	set {_name} to "blindness_soup"
 	set {_addict} to 160
 	set {_deftime} to 160
-	set {_ingridients::*} to {_def::*}, {_choice}, {_choice}
+	set {_ingridients::*} to ({_def::*}), ({_choice}), ({_choice})
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -221,7 +221,7 @@ on load:
 	set {_name} to "fire_resistance_soup"
 	set {_addict} to 80
 	set {_deftime} to 80
-	set {_ingridients::*} to {_def::*}, {_choice}, {_choice}
+	set {_ingridients::*} to ({_def::*}), ({_choice}), ({_choice})
 	loop 4 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()
@@ -235,7 +235,7 @@ on load:
 	set {_name} to "levitation_soup"
 	set {_addict} to 180
 	set {_deftime} to 180
-	set {_ingridients::*} to {_def::*}, {_choice}
+	set {_ingridients::*} to ({_def::*}), ({_choice})
 	loop 5 times:
 		set {_item} to new ItemStack(Material.SUSPICIOUS_STEW,1)
 		set {_itemmeta} to {_item}.getItemMeta().clone()

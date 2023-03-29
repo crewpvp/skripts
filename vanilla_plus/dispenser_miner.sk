@@ -221,12 +221,14 @@ on dispense:
 			{_pickaxe} is set
 			canMoveThrough((block at {_path::%{_i}%}),{_block}.getType()) is true
 			{_block} is dispenser
-				
+			(chunk at (location of {_block} ~ {_facing}.getDirection())).isLoaded() is true	
 			set {_block} to moveDispenserByLoc({_block},{_path::%{_i}%})
 			set {_path::%{_i}%} to {_path::%{_i}%} ~ {_facing}.getDirection()
+
+
 			set {_target} to {_block}.getRelative({_facing})
 			
-				
+			
 			if canSkipped({_target}) is false:
 				if canBreak({_target}) is false:
 					stop
@@ -263,6 +265,7 @@ on dispense:
 			set {_i} to {_p}
 
 		getScheme({_val::1},{_val::2},{_val::3},{_val::4}) is set
+		(chunk at (location of {_block} ~ {_facing}.getDirection())).isLoaded() is true	
 		canMoveThrough({_block}.getRelative({_facing})) is true	
 
 		set {_block} to moveDispenser({_block},{_facing})

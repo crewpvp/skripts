@@ -6,9 +6,9 @@ on load:
 	set {-invisibleitemframe} to item frame named "&eНевидимая рамка"  with nbt (nbt compound from "{EntityTag:{Invisible:1b}}")
 	set {-invisibleglowitemframe} to glow item frame named "&eНевидимая светящаяся рамка" with nbt (nbt compound from "{EntityTag:{Invisible:1b}}")
 
-	register new shapeless recipe for {-invisibleitemframe} using item frame,phantom membrane with id "invisible_item_frame"
-	register new shapeless recipe for {-invisibleglowitemframe} using {-invisibleitemframe},glow ink sac with id "invisible_glow_item_frame_2"
-	register new shapeless recipe for {-invisibleglowitemframe} using glow item frame,phantom membrane with id "invisible_glow_item_frame"
+	register new shapeless recipe for {-invisibleitemframe} using (item frame),(phantom membrane) with id "invisible_item_frame"
+	register new shapeless recipe for {-invisibleglowitemframe} using ({-invisibleitemframe}),(glow ink sac) with id "invisible_glow_item_frame_2"
+	register new shapeless recipe for {-invisibleglowitemframe} using (glow item frame),(phantom membrane) with id "invisible_glow_item_frame"
 
 
 on HangingBreakEvent:

@@ -1,7 +1,7 @@
 on explosion:
 	set {_loc} to location of event-entity
 	loop Exploded Blocks:
-		if loop-value is not air or water or lava:
+		if loop-value is not (air) or (water) or (lava):
 			if y coord of loop-value is less than y coord of {_loc}:
 				set {_loc::1} to (location of loop-value ~ vector(0,1,0))
 			else:

@@ -23,7 +23,7 @@ on dispense:
 			if loop-block is oak leaves:
 				set {_tree} to oak sapling
 				stop loop
-			else if loop-block is azalea leaves or flowering azalea leaves:
+			else if loop-block is (azalea leaves) or (flowering azalea leaves):
 				set {_tree} to random element of (azalea, flowering azalea)
 				stop loop
 	else if {_type} is Material.MANGROVE_ROOTS:
@@ -85,7 +85,7 @@ on dispense:
 		loop blocks in radius 1.8 around {_block}:
 			if (y coord of {_block}) is (y coord of loop-block):
 				if {_types::*} contains loop-block.getType():
-					if (block under loop-block) is grass or dirt or podzol:
+					if (block under loop-block) is (grass) or (dirt) or (podzol):
 						break loop-block by event-item for {_time} and store drop in {_drops::*}
 						drop {_drops::*} at {_block} without velocity
 						set block at loop-block to {_tree}
@@ -97,7 +97,7 @@ on dispense:
 										remove loop-item from inventory of event-block
 								stop loop
 						add 1 to {_c}
-		if block under {_block} is grass or dirt or podzol or warped nylium or crimson nylium:
+		if block under {_block} is (grass) or (dirt) or (podzol) or (warped nylium) or (crimson nylium):
 			set block at {_block} to {_tree}
 		add 1 to {_c}
 		set {_blocks::%{_c}%} to location of {_block}

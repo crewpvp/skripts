@@ -2,7 +2,6 @@ import:
 	org.bukkit.entity.LivingEntity
 On Projectile Hit:
 	event-projectile is a snowball
-
 	if victim is not player:
 		if victim.getFreezeTicks() is less than 540: 
 			victim.setFreezeTicks(60+victim.getFreezeTicks())

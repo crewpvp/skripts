@@ -92,15 +92,15 @@ function calcItemDamage(item: item) :: number:
 		return {_damage}+({_level}*0.5)
 	return {_damage}
 function calcTime(item:item, block: block) :: number:
-	if {_item} is wood pickaxe or wood axe:
+	if {_item} is (wood pickaxe) or (wood axe):
 		set {_time} to 2
-	else if {_item} is stone pickaxe or stone axe:
+	else if {_item} is (stone pickaxe) or (stone axe):
 		set {_time} to 4
-	else if {_item} is iron pickaxe or iron axe:
+	else if {_item} is (iron pickaxe) or (iron axe):
 		set {_time} to 6
-	else if {_item} is diamond pickaxe or diamond axe:
+	else if {_item} is (diamond pickaxe) or (diamond axe):
 		set {_time} to 8
-	else if {_item} is netherite pickaxe or netherite axe:
+	else if {_item} is (netherite pickaxe) or (netherite axe):
 		set {_time} to 9
 	else:
 		set {_time} to 12	
@@ -185,7 +185,7 @@ function pipe(block: block, facing: object, items: items) :: items:
 	loop 60000 times:
 		if {_block}.getType() is Material.LIGHTNING_ROD:
 			set {_irod} to {_block}
-			if {_block}.getBlockData().getFacing() is {_facing} or {_rfacing}:
+			if {_block}.getBlockData().getFacing() is ({_facing}) or ({_rfacing}):
 				set {_block} to {_block}.getRelative({_facing})
 			else:
 				delete {_block}
@@ -521,7 +521,7 @@ function pipe(block: block, facing: object, items: items) :: items:
 			
 
 		# нашли поворот
-		else if {_block} is copper block or cut copper block or waxed copper block or waxed cut copper block:
+		else if {_block} is (copper block) or (cut copper block) or (waxed copper block) or (waxed cut copper block):
 			if {_points::%{_block}%} is not set:
 				set {_points::%{_block}%} to true
 				add 1 to {_c}
@@ -567,7 +567,7 @@ function pipe(block: block, facing: object, items: items) :: items:
 				set {_facing} to {_directions::%loop-index%}
 				set {_rfacing} to {_facing}.getOppositeFace()
 				if {_block}.getType() is Material.LIGHTNING_ROD:
-					if {_block}.getBlockData().getFacing() is {_facing} or {_rfacing}:
+					if {_block}.getBlockData().getFacing() is ({_facing}) or ({_rfacing}):
 						stop loop
 
 	if {_restExists} is true:

@@ -38,7 +38,7 @@ function teleportPipe(block: block, facing: object) :: location:
 				set {_facing} to {_directions::%loop-index%}
 				set {_rfacing} to {_facing}.getOppositeFace()
 				if {_block}.getType() is Material.END_ROD:
-					if {_block}.getBlockData().getFacing() is {_facing} or {_rfacing}:
+					if {_block}.getBlockData().getFacing() is ({_facing}) or ({_rfacing}):
 						exit this loop
 	return {_location}
 
@@ -51,7 +51,7 @@ on dispense:
 	set {_refacing} to {_facing}.getOppositeFace()
 	set {_reblock} to event-block.getRelative({_refacing})
 	{_reblock}.getType() is Material.END_ROD 
-	{_reblock}.getBlockData().getFacing() is ({_refacing} or {_facing})
+	{_reblock}.getBlockData().getFacing() is ({_refacing}) or ({_facing})
 	set {_loc} to teleportPipe({_reblock},{_refacing})
 	{_loc} is set
 	loop entities in radius 0.8 around {_block}:
