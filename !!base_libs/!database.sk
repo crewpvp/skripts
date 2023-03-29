@@ -1,12 +1,17 @@
 on load:
 	load yaml "secrets.yml" as "database"
-	set {-database::password} to yaml value "password" from "database"
-	set {-database::user} to yaml value "user" from "database"
-	set {-database::database} to yaml value "database" from "database"
-	set {-database::address} to yaml value "address" from "database"
-	set {-database::port} to yaml value "port" from "database"
+	set {-database::password} to yaml value "mariadb-password" from "database"
+	set {-database::user} to yaml value "mariadb-user" from "database"
+	set {-database::database} to yaml value "mariadb-database" from "database"
+	set {-database::address} to yaml value "mariadb-address" from "database"
+	set {-database::port} to yaml value "mariadb-port" from "database"
 	set {-database::connection} to the database "mysql://%{-database::address}%:%{-database::port}%/%{-database::database}%?user=%{-database::user}%&password=%{-database::password}%&useSSL=false"
 	unload yaml "database"
+
+# reconnect to database
+effect reconnect to database:
+	trigger:
+		set {-database::connection} to the database "mysql://%{-database::address}%:%{-database::port}%/%{-database::database}%?user=%{-database::user}%&password=%{-database::password}%&useSSL=false"
 
 # get current database connection	
 expression database:
