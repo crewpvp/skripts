@@ -1,0 +1,181 @@
+on load:
+	load yaml "secrets.yml" as "database"
+	set {-discord::token} to yaml value "discord-token" from "database"
+	set {-discord::guildid} to yaml value "discord-guildid" from "database"
+	unload yaml "database"
+
+effect discord[[ ]api] rename channel %number% with %text%:
+	trigger:
+		set {_body} to "{""name"":""%expr-2%""}"
+		set {_headers::*} to (request header "Content-Type" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
+		async request "PATCH" to url "https://discord.com/api/v10/channels/%expr-1%" with headers {_headers::*} and body {_body} and store the body in {_resp} and code in {_code}
+
+effect discord[[ ]api] fetch (member|user) %string% and store [the] result in %object%:
+	trigger:
+		delay the effect
+		set {_disc} to true if expr-1 regex matches "^.*[0-9]{4}$"
+			
+		set {_headers::*} to (request header "Accept" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
+		async request "GET" to url "https://discord.com/api/v10/guilds/%{-discord::guildid}%/members/search?limit=10&query=%expr-1%" with headers {_headers::*} and store the result in {_resp} and code in {_code}
+		
+		if {_code} is 200:
+			set {_resp} to {_resp}.replaceAll("^(.*?)""user""","")
+			set {_users::*} to split {_resp} at """user"""
+			loop {_users::*}:
+				set {_nick} to loop-value.replaceAll("^(.*?)""username"": """, "").replaceAll(""".*", "")
+				if {_disc} is true:
+					set {_discriminator} to loop-value.replaceAll("^(.*?)""discriminator"": """, "").replaceAll(""".*", "")
+					set {_nick} to "%{_nick}%##%{_discriminator}%"
+				if expr-1.equals({_nick}):
+					set {_id} to loop-value.replaceAll("^(.*?)""id"": """, "").replaceAll(""".*", "") parsed as number
+					stop loop
+		set raw expr-2 to {_id}
+		continue
+
+effect discord[[ ]api] remove role[s] %numbers% from (member|user) %number%:
+	trigger:
+		set {_headers::*} to (request header "Accept" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
+		loop exprs-1:
+			async request "DELETE" to url "https://discord.com/api/v10/guilds/%{-discord::guildid}%/members/%expr-2%/roles/%loop-value%" with headers {_headers::*}
+
+effect discord[[ ]api] add role[s] %numbers% to (member|user) %number%:
+	trigger:
+		set {_headers::*} to (request header "Content-Type" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
+		loop exprs-1:
+			async request "PUT" to url "https://discord.com/api/v10/guilds/%{-discord::guildid}%/members/%expr-2%/roles/%loop-value%" with headers {_headers::*} with body "{}"
+
+effect discord[[ ]api] fetch (member|user)['s] %number%['s] tag and store [the] result in %object%:
+	trigger:
+		delay the effect
+		set {_headers::*} to (request header "Accept" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
+		async request "GET" to url "https://discord.com/api/v10/guilds/%{-discord::guildid}%/members/%expr-1%" with headers {_headers::*} and store the result in {_resp} and code in {_code}
+		if {_code} is 200:
+			set {_tag} to {_resp}.replaceAll("^(.*?)""username"": """, "").replaceAll(""", .*", "")
+			set {_discriminator} to {_resp}.replaceAll("^(.*?)""discriminator"": """, "").replaceAll(""", .*", "")
+			set {_tag} to "%{_tag}%##%{_discriminator}%"
+		set raw expr-2 to {_tag}
+		continue 
+
+expression discord[[ ]api] (0¦role|1¦(member|user)) permission %number% [to] [allow %-strings%] [[and] deny %-strings%]:
+	get:
+		if expr-2 is set:
+			set {_allow} to join expr-2 with delimiter ""","""
+			set {_allow} to "[""%{_allow}%""]"
+		else:
+			set {_allow} to "[]" 
+
+		if expr-3 is set:
+			set {_deny} to join expr-3 with delimiter ""","""
+			set {_deny} to "[""%{_deny}%""]"
+		else:
+			set {_deny} to "[]"
+
+		return "{""id"":%expr-1%,""type"":%parse mark%,""allow"":%{_allow}%,""deny"":%{_deny}%}"
+
+effect discord[[ ]api] create text channel named %string% [at position %-number%] [(with|and) permissions %-texts%] [in catergory %-number%] [and store [the] result in %-object%]:
+	trigger:
+		set {_position} to ",""position"":%expr-2%" if expr-2 is set else ""
+		if exprs-3 is set:
+			set {_permissions} to join exprs-3 with delimiter ","
+			set {_permissions} to ",""permission_overwrites"":[%{_permissions}%]"
+		else:
+			set {_permissions} to ""
+		set {_category} to ",""parent_id"":%expr-4%" if expr-4 is set else ""
+		set {_body} to "{""type"":0,""name"":""%expr-1%""%{_position}%%{_permissions}%%{_category}%}"
+		set {_headers::*} to (request header "Content-Type" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
+		async request "POST" to url "https://discord.com/api/v10/guilds/%{-discord::guildid}%/channels" with headers {_headers::*} and body {_body} and store the result in {_resp} and code in {_code}
+		if raw expr-5 is set:
+			if {_code} is 200:
+				set {_id} to {_resp}.replaceAll("^(.*?)""id"": """, "").replaceAll(""", .*", "") parsed as number
+			set raw expr-5 to {_id}
+
+effect discord[[ ]api] send message to channel %number% [with content %-strings%] [(with|and) embed[s] %-texts%] [(with|and) component[s] %-texts%] [and store [the] result in %-object%]:
+	trigger:
+		if exprs-2 is set:
+			set {_content} to (join exprs-2 with delimiter "\n").replace(newline,"\\n")
+			set {_content} to ",""content"":""%{_content}%"""
+		else:
+			set {_content} to "" 
+		if exprs-3 is set:
+			set {_embeds} to join exprs-3 with ","
+			set {_embeds} to ",""embeds"":[%{_embeds}%]"
+		else:
+			set {_embeds} to ""
+		if exprs-4 is set:
+			set {_i} to 1
+			set {_j} to 1
+			loop exprs-4:
+				if {_i} is 6:
+					set {_actionrows::%{_j}%} to join {_components::*} with delimiter ","
+					set {_actionrows::%{_j}%} to "{""type"":1,""components"":[%{_actionrows::%{_j}%}%]}"
+					delete {_components::*}
+					set {_i} to 1
+					add 1 to {_j}
+				set {_components::%{_i}%} to loop-value
+				add 1 to {_i}
+			set {_actionrows::%{_j}%} to join {_components::*} with delimiter ","
+			set {_actionrows::%{_j}%} to "{""type"":1,""components"":[%{_actionrows::%{_j}%}%]}"
+			set {_components} to join {_actionrows::*} with ","
+			set {_components} to ",""components"":[%{_components}%]"
+		else:
+			set {_components} to ""
+		set {_body} to "{""tts"":false%{_content}%%{_embeds}%%{_components}%}"
+		set {_headers::*} to (request header "Content-Type" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
+		async request "POST" to url "https://discord.com/api/v10/channels/%expr-1%/messages" with headers {_headers::*} and body {_body} and store the result in {_resp} and code in {_code}
+		if raw expr-5 is set:
+			if {_code} is 200:
+				set {_id} to {_resp}.replaceAll("^(.*?)""id"": """, "").replaceAll(""", .*", "") parsed as number
+			set raw expr-5 to {_id}
+
+expression discord[[ ]api] button [with] label[ed] %text% [(with|and) (color|style) %-number/text%] (with|and) [custom] id %text%:
+	get:
+		if expr-2 is number:
+			if expr-2 is between 1 and 4:
+				set {_style} to expr-2
+			else:
+				set {_style} to 2
+		else if expr-2 is "blue" or "blurple" or "primary":
+			set {_style} to 1
+		else if expr-2 is "red" or "danger" or "destructive":
+			set {_style} to 4
+		else if expr-2 is "success" or "green":
+			set {_style} to 3
+		else:
+			set {_style} to 2
+		return "{""type"":2,""label"":""%expr-1%"",""style"":%{_style}%,""custom_id"":""%expr-3%""}"
+
+expression discord[[ ]api] [(1¦inlined)] embed field [with] name[d] %text% (and|with) value %text%:
+	get:
+		set {_inlined} to "true" if parse mark is 1 else "false"
+		return "{""name"":""%expr-1%"",""value"":""%expr-2%"",""inline"":%{_inlined}%}"
+
+expression discord[[ ]api] color [(from|of)] %number%[ ][[,] ]%number%[ ][[,] ]%number%[ ][[,] ]%number%:
+	get:
+		return round((65536 * expr-1) + (256 * expr-2) + expr-3)
+
+expression discord[[ ]api] select option [with] label[ed] %text% [(and|with) desc[ription] %-text%] (with|and) value %text%:
+	get:
+		if expr-2 is set:
+			return "{""label"":""%expr-1%"",""value"":""%expr-3%"",""description"":""%expr-2%""}"
+		return "{""label"":""%expr-1%"",""value"":""%expr-3%""}"
+
+expression discord[[ ]api] select with option[s] %texts% [(and|with) placeholder %-text%] [(and|with) max[imum] [value[s]] %-number%] [(and|with) min[imum] [value[s]] %-number%] (with|and) [custom] id %text%:
+	get:
+		set {_options} to join exprs-1 with delimiter ","
+		set {_placeholder} to ",""placeholder"":""%expr-2%""" if expr-2 is set else ""
+		set {_max} to ",""max_values"":%expr-3%" if expr-3 is set else ""
+		set {_min} to ",""min_values"":%expr-4%" if expr-4 is set else ""
+		return "{""type"":3,""custom_id"":""%expr-5%"",""options"":[%{_options}%]%{_placeholder}%%{_min}%%{_max}%}"
+
+expression discord[[ ]api] embed [[with] title[d] %-text%] [(and|with) desc[ritpion] %-texts%] [(and|with) footer %-text%] [[(and|with)] color[ed] %-number%] [(and|with) field[s] %-texts%]:
+	get:
+		set {_title} to ",""title"":""%expr-1%""" if expr-1 is set else ""
+		set {_description} to ",""description"":""%expr-2%""" if expr-2 is set else ""
+		set {_footer} to ",""footer"":""%expr-3%""" if expr-3 is set else ""
+		set {_color} to ",""color"":""%expr-4%""" if expr-4 is set else ""
+		if exprs-5 is set:
+			set {_fields} to join exprs-5 with delimiter ","
+			set {_fields} to ",""fields"":[%{_fields}%]"
+		else:
+			set {_fields} to ""
+		return "{""type"":""rich""%{_title}%%{_description}%%{_footer}%%{_color}%%{_fields}%}"
