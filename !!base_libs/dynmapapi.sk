@@ -227,7 +227,7 @@ expression dynmap[[ ]api] [(0¦x|1¦z)] (size|radius) of circle[ ]marker %object
 			expr-1.setRadius(change value, change value)
 
 
-expression dynmap[[ ]api] color [(from|of)] %number%[ ][[,] ]%number%[ ][[,] ]%number%[ ][[,] ]%number%:
+expression dynmap[[ ]api] color [(from|of)] %number%[ ][,[ ]]%number%[ ][,[ ]]%number%:
 	get:
 		return round((65536 * expr-1) + (256 * expr-2) + expr-3)
 

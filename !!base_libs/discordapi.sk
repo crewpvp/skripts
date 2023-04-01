@@ -154,7 +154,7 @@ expression discord[[ ]api] [(1¦inlined)] embed field [with] name[d] %text% (and
 		set {_inlined} to "true" if parse mark is 1 else "false"
 		return "{""name"":""%expr-1%"",""value"":""%expr-2%"",""inline"":%{_inlined}%}"
 
-expression discord[[ ]api] color [(from|of)] %number%[ ][[,] ]%number%[ ][[,] ]%number%[ ][[,] ]%number%:
+expression discord[[ ]api] color [(from|of)] %number%[ ][,[ ]]%number%[ ][,[ ]]%number%:
 	get:
 		return round((65536 * expr-1) + (256 * expr-2) + expr-3)
 
