@@ -1,0 +1,43 @@
+import:
+	ch.njol.skript.variables.Variables
+	org.apache.commons.lang3.StringUtils
+
+on load:
+	load yaml "secrets.yml" as "database"
+	if (yaml value "ipgeolocation.token" from "database") and (yaml value "ipgeolocation.timezone-offset" from "database") is set:
+		set {-ipgeolocation::token} to yaml value "ipgeolocation.token" from "database"
+		set {-ipgeolocation::timezone-offset} to yaml value "ipgeolocation.timezone-offset" from "database"
+	else:
+		set yaml value "ipgeolocation.token" from "databse" to "get token at https://app.ipgeolocation.io/"
+		set yaml value "ipgeolocation.timezone-offset" from "database" to 0
+		save yaml "database"
+	unload yaml "database"
+
+options:
+	url: "https://api.ipgeolocation.io/timezone?apiKey=%{-ipgeolocation::token}%&ip=%{_ip}%"
+
+expression timezone offset:
+	return type: number
+	get:
+		return {-ipgeolocation::timezone-offset}
+
+effect geolocation[[ ]api] of %text/player% stored in %objects%:
+	parse:
+		set {_local} to expr-2.isLocal()
+		set {_name} to StringUtils.chop(expr-2.name.toString(event))
+		continue
+	trigger:
+		delay the effect
+		set {_ip} to ip of expr-1 if expr-1 is player else expr-1
+		async request "GET" to url {@url} and store the body in {_resp} and code in {_code}
+		if {_code} is between 200 and 299:
+			set {_r::country} to {_resp}.replaceAll(".*""country_name"":""","").replaceAll(""".*","").replaceAll("'","")
+			set {_r::city} to {_resp}.replaceAll(".*""city"":""","").replaceAll(""".*","").replaceAll("'","")
+			set {_r::timezone} to {-ipgeolocation::timezone-offset}+({_resp}.replaceAll(".*""timezone_offset"":","").replaceAll(",.*","") parsed as number)
+		else:
+			set {_r::country} to "Unknown"
+			set {_r::city} to "Unknown"
+			set {_r::timezone} to 0
+		loop {_r::*}:
+			Variables.setVariable("%{_name}%%loop-index%",loop-value,event,{_local})
+		continue
