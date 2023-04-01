@@ -1,0 +1,288 @@
+import:
+	org.dynmap.DynmapCommonAPIListener
+	java.lang.Double
+
+on load:
+	set {-dynmapapi::commonapi} to DynmapCommonAPIListener.dynmapapi
+	set {-dynmapapi::markerapi} to {-dynmapapi::commonapi}.getMarkerAPI()
+
+expression dynmap[[ ]api] marker[ ]set %text%:
+	get:
+		return {-dynmapapi::markerapi}.getMarkerSet(expr-1)
+
+expression dynmap[[ ]api] all marker[ ]sets:
+	get:
+		return ...{-dynmapapi::markerapi}.getMarkerSets()
+
+expression dynmap[[ ]api] new [(1¦persistent)] marker[ ]set [with] label[ed] %text% (and|with) id %text%:
+	get:
+		set {_persistent} to true if parse mark is 1 else false
+		return {-dynmapapi::markerapi}.createMarkerSet(expr-2, expr-1, null, {_persistent})
+
+expression dynmap[[ ]api] marker[ ]set %object% layer [priority]:
+	get:
+		return expr-1.getLayerPriority()
+	set number:
+		expr-1.setLayerPriority(change value)
+
+expression dynmap[[ ]api] marker[ ]set %object% label visibility:
+	get:
+		return expr-1.getHideByDefault()
+	set boolean:
+		expr-1.setHideByDefault(change value)
+
+expression dynmap[[ ]api] marker[ ]set %object% [default] visibility:
+	get:
+		return expr-1.getHideByDefault()
+	set boolean:
+		expr-1.setHideByDefault(change value)
+
+expression dynmap[[ ]api] [(circle|area|(poly[ ]line))[ ]]marker[[ ]set] %object% max zoom:
+	get:
+		return expr-1.getMaxZoom()
+	set number:
+		expr-1.setMaxZoom(change value)
+
+expression dynmap[[ ]api] [(circle|area|(poly[ ]line))[ ]]marker[[ ]set] %object% min zoom:
+	get:
+		return expr-1.getMinZoom()
+	set number:
+		expr-1.setMinZoom(change value)
+
+expression dynmap[[ ]api] label of marker[ ]set %object%:
+	get:
+		return expr-1.getMarkerSetLabel()
+	set text:
+		expr-1.setMarkerSetLabel(change value)
+
+expression dynmap[[ ]api] id of marker[ ]set %object%:
+	get:
+		return expr-1.getMarkerSetID()
+
+expression dynmap[[ ]api] [all] markers of marker[ ]set %object%:
+	get:
+		return ...expr-1.getMarkers()
+
+expression dynmap[[ ]api] [all] area markers of marker[ ]set %object%:
+	get:
+		return ...expr-1.getAreaMarkers()
+
+expression dynmap[[ ]api] [all] poly[ ]line markers of marker[ ]set %object%:
+	get:
+		return ...expr-1.getPolyLineMarkers()
+
+expression dynmap[[ ]api] [all] circle markers of marker[ ]set %object%:
+	get:
+		return ...expr-1.getCircleMarkers()
+
+effect delete marker[ ]set %object%:
+	trigger:
+		expr-1.deleteMarkerSet()
+
+
+expression dynmap[[ ]api] new [(1¦persistent)] marker [with] label[ed] %text% (with|and) id %text% at %location% (of|in) marker[ ]set %object%:
+	get:
+		set {_persistent} to true if parse mark is 1 else false
+		set {_x} to expr-3.getX()
+		set {_y} to expr-3.getY()
+		set {_z} to expr-3.getZ()
+		set {_world} to expr-3.getWorld()
+		return expr-4.createMarker(expr-2,expr-1,{_world},{_x},{_y},{_z},null,{_persistent})
+
+expression dynmap[[ ]api] marker %text% (of|in) marker[ ]set %object%:
+	get:
+		set {_marker} to expr-2.findMarker(expr-1)
+		if {_marker} is not set:
+			return expr-2.findMarkerByLabel(expr-1)
+		return {_marker}
+
+expression dynmap[[ ]api] (position|location) of marker %object%:
+	get:
+		set {_x} to expr-1.getX()
+		set {_y} to expr-1.getY()
+		set {_z} to expr-1.getZ()
+		set {_world} to expr-1.getWorld()
+		return location {_x}, {_y}, {_z} in {_world}
+	set location:
+		set {_x} to (change value).getX()
+		set {_y} to (change value).getY()
+		set {_z} to (change value).getZ()
+		set {_world} to expr-1.getWorld().getName()
+		expr-1.setLocation({_world},{_x},{_y},{_z})
+
+
+
+expression dynmap[[ ]api] new [(1¦persistent)] area[ ]marker [with] label[ed] %text% (with|and) id %text% (at|with point[s]) %locations% (of|in) [marker[ ]set] %object%:
+	get:
+		set {_persistent} to true if parse mark is 1 else false
+		set {_world} to (first element of exprs-3).getWorld().getName()
+		loop exprs-3:
+			add 1 to {_i}
+			set {_x::%{_i}%} to loop-value.getX()
+			set {_z::%{_i}%} to loop-value.getZ()
+		return expr-4.createAreaMarker(expr-2,expr-1,false,{_world},[{_x::*} as Double],[{_z::*} as Double],{_persistent})
+
+expression dynmap[[ ]api] area[ ]marker %text% (of|in) marker[ ]set %object%:
+	get:
+		set {_marker} to expr-2.findAreaMarker(expr-1)
+		if {_marker} is not set:
+			return expr-2.findAreaMarkerByLabel(expr-1)
+		return {_marker}
+
+expression dynmap[[ ]api] corner %number% (of|in) area[ ]marker %object%:
+	get:
+		set {_x} to expr-2.getCornerX(expr-1)
+		set {_y} to expr-2.getBottomY()
+		set {_z} to expr-2.getCornerZ(expr-1)
+		set {_world} to expr-2.getWorld()
+		return location {_x}, {_y}, {_z} in {_world}
+	set location:
+		expr-1.setCornerLocation(expr-1,(change value).getX(),(change value).getZ())
+
+expression dynmap[[ ]api] (0¦(min|bottom)|1¦(max|top)) [y[-][ ]]range of circle[ ]marker %object%:
+	get:
+		return expr-1.getTopY() if parse mark is 1 else expr-1.getBottomY()
+	set number:
+		if parse mark is 1:
+			expr-1.setRangeY(change value, expr-1.getBottomY())
+		else:
+			expr-1.setRangeY(expr-1.getTopY(), change value)
+
+
+expression dynmap[[ ]api] new [(1¦persistent)] poly[ ]line[ ]marker [with] label[ed] %text% (with|and) id %text% (at|with point[s]) %locations% (of|in) [marker[ ]set] %object%:
+	get:
+		set {_persistent} to true if parse mark is 1 else false
+		set {_world} to (first element of exprs-3).getWorld().getName()
+		loop exprs-3:
+			add 1 to {_i}
+			set {_x::%{_i}%} to loop-value.getX()
+			set {_y::%{_i}%} to loop-value.getY()
+			set {_z::%{_i}%} to loop-value.getZ()
+		return expr-4.createAreaMarker(expr-2,expr-1,{_world},[{_x::*} as Double],[{_y::*} as Double],[{_z::*} as Double],{_persistent})
+
+expression dynmap[[ ]api] poly[ ]line[ ]marker %text% (of|in) marker[ ]set %object%:
+	get:
+		set {_marker} to expr-2.findPolyLineMarker(expr-1)
+		if {_marker} is not set:
+			return expr-2.findPolyLineMarkerByLabel(expr-1)
+		return {_marker}
+
+expression dynmap[[ ]api] corner %number% (of|in) poly[ ]line[ ]marker %object%:
+	get:
+		set {_x} to expr-2.getCornerX(expr-1)
+		set {_y} to expr-2.getCornerY(expr-1)
+		set {_z} to expr-2.getCornerZ(expr-1)
+		set {_world} to expr-2.getWorld()
+		return location {_x}, {_y}, {_z} in {_world}
+	set location:
+		expr-1.setCornerLocation(expr-1,(change value).getX(),(change value).getY(),(change value).getZ())
+	delete:
+		expr-1.deleteCorner(expr-1)
+
+expression dynmap[[ ]api] corner (amount|count) (of|in) (area|(poly[ ]line))[ ]marker %object%:
+	get:
+		return expr-1.getCornerCount()
+
+
+expression dynmap[[ ]api] new [(1¦persistent)] circle[ ]marker [with] label[ed] %text% (with|and) id %text% (at|with center) %location% (with|and) (radius|size) %number%[[ ],[ ]%-number%] (of|in) [marker[ ]set] %object%:
+	get:
+		set {_persistent} to true if parse mark is 1 else false
+		set {_zr} to expr-5 if expr-5 is set else expr-4
+		set {_x} to expr-3.getX()
+		set {_y} to expr-3.getY()
+		set {_z} to expr-3.getZ()
+		set {_world} to expr-3.getWorld()
+		return expr-6.createMarker(expr-2,expr-1,{_world},{_x},{_y},{_z},expr-4,{_zr},{_persistent})
+
+expression dynmap[[ ]api] circle[ ]marker %text% (of|in) marker[ ]set %object%:
+	get:
+		set {_marker} to expr-2.findCircleMarker(expr-1)
+		if {_marker} is not set:
+			return expr-2.findCircleMarkerByLabel(expr-1)
+		return {_marker}
+
+expression dynmap[[ ]api] (center|position|location) of circle[ ]marker %object%:
+	get:
+		set {_x} to expr-1.getCenterX()
+		set {_y} to expr-1.getCenterY()
+		set {_z} to expr-1.getCenterZ()
+		set {_world} to expr-1.getWorld()
+		return location {_x}, {_y}, {_z} in {_world}
+	set location:
+		set {_x} to (change value).getX()
+		set {_y} to (change value).getY()
+		set {_z} to (change value).getZ()
+		set {_world} to expr-1.getWorld().getName()
+		expr-1.setCenter({_world},{_x},{_y},{_z})
+
+expression dynmap[[ ]api] [(0¦x|1¦z)] (size|radius) of circle[ ]marker %object%:
+	get:
+		return expr-1.getRadiusZ() if parse mark is 1 else expr-1.getRadiusX()
+	set number:
+		if parse mark is 1:
+			expr-1.setRadius(change value, expr-1.getRadiusZ())
+		else if parse mark is 2:
+			expr-1.setRadius(expr-1.getRadiusX(), change value)
+		else:
+			expr-1.setRadius(change value, change value)
+
+
+expression dynmap[[ ]api] color [(from|of)] %number%[ ][[,] ]%number%[ ][[,] ]%number%[ ][[,] ]%number%:
+	get:
+		return round((65536 * expr-1) + (256 * expr-2) + expr-3)
+
+expression dynmap[[ ]api] line color of (circle|(poly[ ]line)|area)[ ]marker %object%:
+	get:
+		return expr-1.getLineColor()
+	set number:
+		expr-1.setLineStyle(expr-1.getLineWeight(),expr-1.getLineOpacity(),change value)
+
+expression dynmap[[ ]api] line opacity of (circle|(poly[ ]line)|area)[ ]marker %object%:
+	get:
+		return expr-1.getLineOpacity()
+	set number:
+		expr-1.setLineStyle(expr-1.getLineWeight(),change value,expr-1.getLineColor())
+
+expression dynmap[[ ]api] line (size|weight) of (circle|(poly[ ]line)|area)[ ]marker %object%:
+	get:
+		return expr-1.getLineWeight()
+	set number:
+		expr-1.setLineStyle(change value,expr-1.getLineOpacity(),expr-1.getLineColor())
+
+expression dynmap[[ ]api] fill color of (circle|area)[ ]marker %object%:
+	get:
+		return expr-1.getFillColor()
+	set number:
+		expr-1.setFillStyle(expr-1.getFillOpacity(),change value)
+
+expression dynmap[[ ]api] fill opacity of (circle|area)[ ]marker %object%:
+	get:
+		return expr-1.getFillOpacity()
+	set number:
+		expr-1.setFillStyle(change value,expr-1.getFillColor())
+
+expression dynmap[[ ]api] desc[ription] of [(circle|area|(poly[ ]line))[ ]]marker %object%:
+	get:
+		expr-1.getDescription()
+	set text:
+		expr-1.setDescription()
+
+expression dynmap[[ ]api] marker set of [(circle|area|(poly[ ]line))[ ]]marker %object%:
+	get:
+		return expr-1.getMarkerSet()
+	set object:
+		expr-1.setMarkerSet(change value)
+
+effect delete [(circle|area|(poly[ ]line))[ ]]marker %object%:
+	trigger:
+		expr-1.deleteMarker()
+
+expression dynmap[[ ]api] label of [(circle|area|(poly[ ]line))[ ]]marker %object%:
+	get:
+		return expr-1.getLabel()
+	set text:
+		expr-1.setLabel(change value)
+
+expression dynmap[[ ]api] id of [(circle|area|(poly[ ]line))[ ]]marker %object%:
+	get:
+		return expr-1.getMarkerID()
