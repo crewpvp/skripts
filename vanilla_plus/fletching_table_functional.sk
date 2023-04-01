@@ -1,0 +1,71 @@
+on rightclick on fletching table:
+	if player is sneaking:
+		if (1 of player's held item).getType().isBlock() or (1 of player's off hand item).getType().isBlock() is true:
+			stop
+	cancel event
+	make player swing their main hand 
+	create gui with chest inventory with 3 row named "Стол лучника" with shape "xxxxxxxxx","xaxxpxxrx","xxxxxxxxx":
+		set {_p} to player
+		make gui slot "x" with white stained glass pane
+			
+		make gui slot "a" with stealable air:
+			uncancel event
+			wait 1 tick
+			if slot 13 of (gui inventory) is any potion:
+				if slot 10 of (gui inventory) is arrow:
+					if item amount of (slot 10 of (gui inventory)) is greater or equal to 8:
+						set {_item} to tipped arrow
+						set {_potion} to 1 of (slot 13 of (gui inventory))
+						{_item}.setItemMeta(({_potion}.getItemMeta().clone()))
+						set slot 16 of (gui inventory) to 8 of {_item} 
+					else:
+						set slot 16 of (gui inventory) to air
+				else:
+					set slot 16 of (gui inventory) to air
+			else:
+				set slot 16 of (gui inventory) to air
+
+		make gui slot "p" with stealable air:
+			uncancel event
+			wait 1 tick
+			if slot 13 of (gui inventory) is any potion:
+				if slot 10 of (gui inventory) is arrow:
+					if item amount of (slot 10 of (gui inventory)) is greater or equal to 8:
+						set {_item} to tipped arrow
+						set {_potion} to 1 of (slot 13 of (gui inventory))
+						{_item}.setItemMeta(({_potion}.getItemMeta().clone()))
+						set slot 16 of (gui inventory) to 8 of {_item} 
+					else:
+						set slot 16 of (gui inventory) to air
+				else:
+					set slot 16 of (gui inventory) to air
+			else:
+				set slot 16 of (gui inventory) to air
+
+		make gui slot "r" with air:
+			if {_p}'s cursor slot is air:
+				if slot 16 of (gui inventory) is not air:
+					uncancel event
+					set slot 13 of (gui inventory) to air
+					remove 8 of arrow from slot 10 of (gui inventory)
+		
+		run on gui close:
+			set {_vec} to {_p}.getEyeLocation().getDirection()
+			if {_p} has space for slot 13 of (gui inventory):
+				add slot 13 of (gui inventory) to inventory of {_p}
+			else:
+				drop (slot 13 of (gui inventory)) at head of {_p} without velocity
+				push last dropped item {_vec} at speed 0.3
+			if {_p} has space for slot 10 of (gui inventory):
+				add slot 10 of (gui inventory) to inventory of {_p}
+			else:
+				drop (slot 10 of (gui inventory)) at head of {_p} without velocity
+				push last dropped item {_vec} at speed 0.3
+
+	open last created gui to player
+	while (distance between player and clicked block is less than 5):
+		if player doesn't have a gui:
+			stop
+		wait 1 tick
+	if player has a gui:
+		close player's inventory
