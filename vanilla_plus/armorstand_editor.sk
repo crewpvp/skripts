@@ -414,11 +414,19 @@ on rightclick on armor stand:
 	if player's gamemode is not spectator:
 		if player is sneaking:
 			cancel event
+			make player swing their hand
 			armorstandEditGui(player,clicked entity)
+			while (distance between player and clicked entity is less than 5):
+				if player doesn't have a gui:
+					stop
+				wait 1 tick
+			if player has a gui:
+				close player's inventory
 		else if player's off hand item is not air:
 			if (clicked entity).getEquipment().getItemInOffHand() is air:
 				cancel event
 				(clicked entity).getEquipment().setItemInOffHand(1 of player's off hand item)
+				make player swing their off hand
 				if player's gamemode is not creative or spectator:
 					remove 1 of player's off hand item from player's off hand item
 
