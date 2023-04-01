@@ -1,11 +1,19 @@
 on load:
 	load yaml "secrets.yml" as "database"
-	set {-database::password} to yaml value "mariadb-password" from "database"
-	set {-database::user} to yaml value "mariadb-user" from "database"
-	set {-database::database} to yaml value "mariadb-database" from "database"
-	set {-database::address} to yaml value "mariadb-address" from "database"
-	set {-database::port} to yaml value "mariadb-port" from "database"
-	set {-database::connection} to the database "mysql://%{-database::address}%:%{-database::port}%/%{-database::database}%?user=%{-database::user}%&password=%{-database::password}%&useSSL=false"
+	if (yaml value "mariadb.password" from "database"),(yaml value "mariadb.user" from "database"),(yaml value "mariadb.database" from "database"),(yaml value "mariadb.address" from "database"),(yaml value "mariadb.port" from "database") is set:
+		set {-database::password} to yaml value "mariadb.password" from "database"
+		set {-database::user} to yaml value "mariadb.user" from "database"
+		set {-database::database} to yaml value "mariadb.database" from "database"
+		set {-database::address} to yaml value "mariadb.address" from "database"
+		set {-database::port} to yaml value "mariadb.port" from "database"
+		set {-database::connection} to the database "mysql://%{-database::address}%:%{-database::port}%/%{-database::database}%?user=%{-database::user}%&password=%{-database::password}%&useSSL=false"
+	else:
+		set yaml value "mariadb.password" from "database" to "password of your's user"
+		set yaml value "mariadb.user" from "database" to "name of your's user"
+		set yaml value "mariadb.database" from "database" to "name of needed database"
+		set yaml value "mariadb.address" from "database" to "localhost"
+		set yaml value "mariadb.port" from "database" to 3306
+		save yaml "database"
 	unload yaml "database"
 
 # reconnect to database

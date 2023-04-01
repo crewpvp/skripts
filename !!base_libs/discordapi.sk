@@ -1,7 +1,12 @@
 on load:
 	load yaml "secrets.yml" as "database"
-	set {-discord::token} to yaml value "discord-token" from "database"
-	set {-discord::guildid} to yaml value "discord-guildid" from "database"
+	if (yaml value "discord.token" from "database") and (yaml value "discord.guild-id" from "database") is set:
+		set {-discord::token} to yaml value "discord.token" from "database"
+		set {-discord::guildid} to yaml value "discord.guild-id" from "database"
+	else:
+		set yaml value "discord.token" from "database" to "get token at https://discord.com/developers/applications/"
+		set yaml value "discord.guild-id" from "database" to "copy your's guild id"
+		save yaml "database"
 	unload yaml "database"
 
 effect discord[[ ]api] rename channel %number% with %text%:
