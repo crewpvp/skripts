@@ -1,0 +1,115 @@
+import:
+	io.netty.channel.ChannelInboundHandler
+	io.netty.channel.ChannelOutboundHandler
+	ch.njol.skript.Skript
+	java.util.ArrayList
+	
+function injectPlayerConnection(p: player):
+	{_p} is online
+	create section with {_proxy}, {_ctx} stored in {_f::channelActive}:
+		{_ctx}.fireChannelActive()
+	create section with {_proxy}, {_ctx} stored in {_f::channelInactive}:
+		{_ctx}.fireChannelInactive()
+	create section with {_proxy}, {_ctx}, {_packet} stored in {_f::channelRead}:
+		set {_ev::player} to {_p}
+		set {_ev::string} to {_packet}.getClass().getSimpleName()
+		set {_data::packet} to {_packet}
+		set {_evt} to custom event "packet_evt" with {_ev::*} using data {_data::*}
+		call event {_evt}
+		
+		if {_evt} is not cancelled:
+			{_ctx}.fireChannelRead({_packet})
+	create section with {_proxy}, {_ctx} stored in {_f::channelReadComplete}:
+		{_ctx}.fireChannelReadComplete()
+	create section with {_proxy}, {_ctx} stored in {_f::channelRegistered}:
+		{_ctx}.fireChannelRegistered()
+	create section with {_proxy}, {_ctx} stored in {_f::channelUnregistered}:
+		{_ctx}.fireChannelUnregistered()
+	create section with {_proxy}, {_ctx} stored in {_f::channelWritabilityChanged}:
+		{_ctx}.fireChannelWritabilityChanged()
+	create section with {_proxy}, {_ctx}, {_throwable} stored in {_f::exceptionCaught}:
+		{_ctx}.fireExceptionCaught({_throwable})
+	create section with {_proxy}, {_ctx}, {_evt} stored in {_f::userEventTriggered}:
+		{_ctx}.fireuserEventTriggered({_evt})
+	
+	create section with {_proxy}, {_ctx}, {_localAddress}, {_channelPromise} stored in {_f::bind}:
+		{_ctx}.bind({_localAddress}, {_channelPromise})
+	create section with {_proxy}, {_ctx}, {_channelPromise} stored in {_f::close}:
+		{_ctx}.close({_channelPromise})
+	create section with {_proxy}, {_ctx}, {_remoteAddress}, {_localAddress}, {_channelPromise} stored in {_f::connect}:
+		{_ctx}.connect({_remoteAddress}, {_localAddress}, {_channelPromise})
+	create section with {_proxy}, {_ctx}, {_channelPromise} stored in {_f::deregister}:
+		{_ctx}.deregister({_channelPromise})
+	create section with {_proxy}, {_ctx}, {_channelPromise} stored in {_f::disconnect}:
+		{_ctx}.disconnect({_channelPromise})
+	create section with {_proxy}, {_ctx} stored in {_f::flush}:
+		{_ctx}.flush()
+	create section with {_proxy}, {_ctx} stored in {_f::read}:
+		{_ctx}.read()
+	create section with {_proxy}, {_ctx}, {_packet}, {_channelPromise} stored in {_f::write}:
+		set {_ev::player} to {_p}
+		set {_ev::string} to {_packet}.getClass().getSimpleName()
+		set {_data::packet} to {_packet}
+		set {_evt} to custom event "packet_evt" with {_ev::*} using data {_data::*}
+		call event {_evt}
+		
+		if {_evt} is not cancelled:
+			{_ctx}.write({_packet}, {_channelPromise})
+	
+	set {_handler} to new proxy instance of ChannelInboundHandler, ChannelOutboundHandler using {_f::*}
+	# player.EntityPlayer.PlayerConnection.NetworkManager.Channel
+	set {_channel} to {_p}.getHandle().b.h.m
+	
+	{_channel}.pipeline().addBefore("packet_handler", "reflect_packets", {_handler})
+
+event "packet_evt":
+	pattern: packet [<(.+)>]
+	event-values: player, string
+	parse:
+		set {_packetType} to first element of regex-1
+		if {_packetType} is not set:
+			continue
+		
+		if class "net.minecraft.network.protocol.game.%{_packetType}%" is set:
+			continue
+		else:
+			Skript.error("That packet doesn't exist")
+	check:
+		if {_packetType} is not set:
+			continue
+		if event-string is {_packetType}:
+			continue
+
+expression [event-]packet:
+	usable in:
+		custom event "packet_evt"
+	get:
+		return event.getData("packet")
+
+on join with priority lowest:
+	injectPlayerConnection(player)
+
+effect send packet %objects% to %players%:
+	trigger:
+		loop exprs-2:
+			loop exprs-1:
+				loop-value-1.getHandle().b.a(loop-value-2)
+import:
+	net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy
+	net.minecraft.network.protocol.game.PacketPlayOutPosition
+	net.minecraft.network.protocol.game.PacketPlayOutCamera
+	net.minecraft.world.entity.RelativeMovement
+	java.util.Set
+	java.util.UUID
+
+function packetDestroyEntity(e:entity) :: object:
+	return new PacketPlayOutEntityDestroy(1,{_e}.getEntityId())
+function packetPosition(loc: location, teleport: boolean) :: object:
+	if {_teleport} is true:
+		set {_set} to Set.of()
+		return new PacketPlayOutPosition({_loc}.getX(),{_loc}.getY(),{_loc}.getZ(),{_loc}.getYaw(),{_loc}.getPitch(),{_set},0)
+	else:
+		set {_set} to Set.of(RelativeMovement.a, RelativeMovement.b, RelativeMovement.c)
+		return new PacketPlayOutPosition(0,0,0,{_loc}.getYaw(),{_loc}.getPitch(),{_set},0)
+function packetCamera(e: entity) :: object:
+	return new PacketPlayOutCamera({_e}.getHandle())
