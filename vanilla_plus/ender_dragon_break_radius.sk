@@ -1,0 +1,14 @@
+options:
+	center-x: 0
+	center-y: -62
+	center-z: 0
+	radius: 50
+
+import:
+	org.bukkit.event.entity.EntityExplodeEvent
+
+on EntityExplodeEvent with priority LOWEST:
+	event.getEntity() is ender dragon
+	set {_center} to location at {@center-x}, {@center-y}, {@center-z} in (world of event.getEntity())
+	distance between location of event.getEntity() and {_center} is greater than {@radius}
+	cancel event
