@@ -1,0 +1,26 @@
+options:
+	ru_RU: "йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,Ёё""№;:?/"
+	us_US: "qwertyuiop[]asdfghjkl;'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:""ZXCVBNM<>?~`@##$^&|"
+on command:
+	sender is player
+	command regex matches "[а-яА-Я\-_]*"
+	set {_ru_RU::*} to {@ru_RU} split at ""
+	set {_us_US::*} to {@us_US} split at ""
+	set {_s::*} to event.getMessage() split at " "
+	set {_final} to subtext of {_s::1} from characters 2 to length of {_s::1}
+	delete {_s::1}
+	loop {_ru_RU::*}:
+		replace all loop-value-1 with {_us_US::%loop-index%} in {_final}
+	loop {_s::*}:
+		if loop-value regex matches "^[а-яА-Я]":
+			loop {_ru_RU::*}:
+				replace all loop-value-2 with {_us_US::%loop-index-2%} in {_s::%loop-index-1%}
+		else:
+			loop {_us_US::*}:
+				replace all loop-value-2 with {_ru_RU::%loop-index-2%} in {_s::%loop-index-1%}
+		set {_final} to "%{_final}% %{_s::%loop-index%}%"
+	
+	event.setMessage("/%{_final}%")
+
+		
+		
