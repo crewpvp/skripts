@@ -1,0 +1,350 @@
+world property simulation distance:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.simulationDistance
+	set number:
+		set expr-1.getHandle().spigotConfig.simulationDistance to (change value).intValue()
+world property view distance:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.viewDistance
+	set number:
+		set expr-1.getHandle().spigotConfig.viewDistance to (change value).intValue()
+
+world property player[s] tracking range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.playerTrackingRange
+	set number:
+		set expr-1.getHandle().spigotConfig.playerTrackingRange to (change value).intValue()
+world property animal[s] tracking range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.animalTrackingRange
+	set number:
+		set expr-1.getHandle().spigotConfig.animalTrackingRange to (change value).intValue()
+world property monster[s] tracking range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.monsterTrackingRange
+	set number:
+		set expr-1.getHandle().spigotConfig.monsterTrackingRange to (change value).intValue()
+world property misc[s] tracking range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.miscTrackingRange
+	set number:
+		set expr-1.getHandle().spigotConfig.miscTrackingRange to (change value).intValue()
+world property other tracking range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.otherTrackingRange
+	set number:
+		set expr-1.getHandle().spigotConfig.otherTrackingRange to (change value).intValue()
+
+world property mob spawn range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.mobSpawnRange
+	set number:
+		set expr-1.getHandle().spigotConfig.mobSpawnRange to (change value).intValue()
+
+import:
+	org.bukkit.entity.SpawnCategory
+
+world property monster[s] spawn limit:
+	return type: number
+	get:
+		return expr-1.getSpawnLimit(SpawnCategory.MONSTER)
+	set number:
+		expr-1.setSpawnLimit(SpawnCategory.MONSTER,(change value).intValue())
+world property animal[s] spawn limit:
+	return type: number
+	get:
+		return expr-1.getSpawnLimit(SpawnCategory.ANIMAL)
+	set number:
+		expr-1.setSpawnLimit(SpawnCategory.ANIMAL,(change value).intValue())
+world property water animal[s] spawn limit:
+	return type: number
+	get:
+		return expr-1.getSpawnLimit(SpawnCategory.WATER_ANIMAL)
+	set number:
+		expr-1.setSpawnLimit(SpawnCategory.WATER_ANIMAL,(change value).intValue())
+world property ambient[s] spawn limit:
+	return type: number
+	get:
+		return expr-1.getSpawnLimit(SpawnCategory.AMBIENT)
+	set number:
+		expr-1.setSpawnLimit(SpawnCategory.AMBIENT,(change value).intValue())
+world property water ambient[s] spawn limit:
+	return type: number
+	get:
+		return expr-1.getSpawnLimit(SpawnCategory.WATER_AMBIENT)
+	set number:
+		expr-1.setSpawnLimit(SpawnCategory.WATER_AMBIENT,(change value).intValue())
+world property water underground[s] [creature[s]] spawn limit:
+	return type: number
+	get:
+		return expr-1.getSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE)
+	set number:
+		expr-1.setSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE,(change value).intValue())
+world property axolotl[s] spawn limit:
+	return type: number
+	get:
+		return expr-1.getSpawnLimit(SpawnCategory.AXOLOTL)
+	set number:
+		expr-1.setSpawnLimit(SpawnCategory.AXOLOTL,(change value).intValue())
+
+world property monster[s] activation range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.monsterActivationRange
+	set number:
+		set expr-1.getHandle().spigotConfig.monsterActivationRange to (change value).intValue()
+world property animal[s] activation range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.animalActivationRange
+	set number:
+		set expr-1.getHandle().spigotConfig.animalActivationRange to (change value).intValue()
+world property misc[s] activation range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.miscActivationRange 
+	set number:
+		set expr-1.getHandle().spigotConfig.miscActivationRange to (change value).intValue()
+world property raider[s] activation range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.raiderActivationRange
+	set number:
+		set expr-1.getHandle().spigotConfig.raiderActivationRange to (change value).intValue()		
+world property water[s] activation range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.waterActivationRange
+	set number:
+		set expr-1.getHandle().spigotConfig.waterActivationRange to (change value).intValue()
+world property flying monster[s] activation range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.flyingMonsterActivationRange
+	set number:
+		set expr-1.getHandle().spigotConfig.flyingMonsterActivationRange to (change value).intValue()
+world property villager[s] activation range:
+	return type: number
+	get:
+		return expr-1.getHandle().spigotConfig.villagerActivationRange
+	set number:
+		set expr-1.getHandle().spigotConfig.villagerActivationRange to (change value).intValue()	
+		
+world property monster[s] spawn[s] per tick[s]:
+	return type: number
+	get:
+		return expr-1.getTicksPerSpawns(SpawnCategory.MONSTER)
+	set number:
+		expr-1.setTicksPerSpawns(SpawnCategory.MONSTER,(change value).intValue())
+world property animal[s] spawn[s] per tick[s]:
+	return type: number
+	get:
+		return expr-1.getTicksPerSpawns(SpawnCategory.ANIMAL)
+	set number:
+		expr-1.setTicksPerSpawns(SpawnCategory.ANIMAL,(change value).intValue())
+world property water animal[s] spawn[s] per tick[s]:
+	return type: number
+	get:
+		return expr-1.getTicksPerSpawns(SpawnCategory.WATER_ANIMAL)
+	set number:
+		expr-1.setTicksPerSpawns(SpawnCategory.WATER_ANIMAL,(change value).intValue())
+world property ambient[s] spawn[s] per tick[s]:
+	return type: number
+	get:
+		return expr-1.getTicksPerSpawns(SpawnCategory.AMBIENT)
+	set number:
+		expr-1.setTicksPerSpawns(SpawnCategory.AMBIENT,(change value).intValue())
+world property water ambient[s] spawn[s] per tick[s]:
+	return type: number
+	get:
+		return expr-1.getTicksPerSpawns(SpawnCategory.WATER_AMBIENT)
+	set number:
+		expr-1.setTicksPerSpawns(SpawnCategory.WATER_AMBIENT,(change value).intValue())
+world property water underground[s] [creature[s]] spawn[s] per tick[s]:
+	return type: number
+	get:
+		return expr-1.getTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE)
+	set number:
+		expr-1.setTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE,(change value).intValue())
+world property axolotl[s] spawn limit:
+	return type: number
+	get:
+		return expr-1.getTicksPerSpawns(SpawnCategory.AXOLOTL)
+	set number:
+		expr-1.setTicksPerSpawns(SpawnCategory.AXOLOTL,(change value).intValue())
+
+import:
+	net.minecraft.world.entity.EnumCreatureType
+	io.papermc.paper.configuration.WorldConfiguration$Entities$Spawning$DespawnRange
+
+world property monster[s] soft despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.a).soft()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.a)
+		set {_despawnRange} to new DespawnRange((change value).intValue(),{_despawnRange}.hard())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.a,{_despawnRange})
+world property animal[s] soft despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.b).soft()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.b)
+		set {_despawnRange} to new DespawnRange((change value).intValue(),{_despawnRange}.hard())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.b,{_despawnRange})
+world property ambient[s] soft despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.c).soft()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.c)
+		set {_despawnRange} to new DespawnRange((change value).intValue(),{_despawnRange}.hard())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.c,{_despawnRange})
+world property axolotl[s] soft despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.d).soft()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.d)
+		set {_despawnRange} to new DespawnRange((change value).intValue(),{_despawnRange}.hard())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.d,{_despawnRange})		
+world property water underground[s] [creature[s]] soft despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.e).soft()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.e)
+		set {_despawnRange} to new DespawnRange((change value).intValue(),{_despawnRange}.hard())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.e,{_despawnRange})	
+world property water animal[s] soft despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.f).soft()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.f)
+		set {_despawnRange} to new DespawnRange((change value).intValue(),{_despawnRange}.hard())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.f,{_despawnRange})
+world property water ambient[s] soft despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.g).soft()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.g)
+		set {_despawnRange} to new DespawnRange((change value).intValue(),{_despawnRange}.hard())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.g,{_despawnRange})
+world property misc[s] soft despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.h).soft()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.h)
+		set {_despawnRange} to new DespawnRange((change value).intValue(),{_despawnRange}.hard())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.h,{_despawnRange})
+
+world property monster[s] hard despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.a).hard()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.a)
+		set {_despawnRange} to new DespawnRange({_despawnRange}.soft(),(change value).intValue())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.a,{_despawnRange})
+world property animal[s] hard despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.b).hard()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.b)
+		set {_despawnRange} to new DespawnRange({_despawnRange}.soft(),(change value).intValue())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.b,{_despawnRange})
+world property ambient[s] hard despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.c).hard()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.c)
+		set {_despawnRange} to new DespawnRange({_despawnRange}.soft(),(change value).intValue())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.c,{_despawnRange})
+world property axolotl[s] hard despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.d).hard()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.d)
+		set {_despawnRange} to new DespawnRange({_despawnRange}.soft(),(change value).intValue())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.d,{_despawnRange})		
+world property water underground[s] [creature[s]] hard despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.e).hard()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.e)
+		set {_despawnRange} to new DespawnRange({_despawnRange}.soft(),(change value).intValue())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.e,{_despawnRange})	
+world property water animal[s] hard despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.f).hard()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.f)
+		set {_despawnRange} to new DespawnRange({_despawnRange}.soft(),(change value).intValue())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.f,{_despawnRange})
+world property water ambient[s] hard despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.g).hard()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.g)
+		set {_despawnRange} to new DespawnRange({_despawnRange}.soft(),(change value).intValue())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.g,{_despawnRange})
+world property misc[s] hard despawn range:
+	return type: number
+	get:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		return {_despawnRanges}.get(EnumCreatureType.h).hard()
+	set number:
+		set {_despawnRanges} to expr-1.getHandle().paperConfig().entities.spawning.despawnRanges
+		set {_despawnRange} to {_despawnRanges}.get(EnumCreatureType.h)
+		set {_despawnRange} to new DespawnRange({_despawnRange}.soft(),(change value).intValue())
+		expr-1.getHandle().paperConfig().entities.spawning.despawnRanges.put(EnumCreatureType.h,{_despawnRange})
+
+
