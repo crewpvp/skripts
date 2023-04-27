@@ -1,0 +1,23 @@
+import:
+	org.apache.commons.lang.RandomStringUtils
+
+expression random [(alphabetic[al]|1¦alphanumeric[al]|2¦ascii|3¦numeric)] [(string|text)] (of|with) length %number%:
+	return type: string
+	get:
+		return RandomStringUtils.randomAlphanumeric(expr-1) if parse mark is 1
+		return RandomStringUtils.randomAscii(expr-1) if parse mark is 2
+		return RandomStringUtils.randomNumeric(expr-1) if parse mark is 3
+		return RandomStringUtils.randomAlphabetic(expr-1)
+
+integer property roman numeral:
+	return type: string
+	get:
+		set {_n} to expr-1
+		set {_roman::*} to split "M|CM|D|CD|C|XC|L|XL|X|IX|V|IV|I" at "|"
+		loop 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4 and 1:
+			add 1 to {_i}
+			while {_n} >= loop-value:
+				add 1 to {_next}
+				remove loop-value from {_n}
+				set {_r} to "%{_r} ? """"%%{_roman::%{_i}%}%"
+		return {_r} ? "0"
