@@ -1,0 +1,163 @@
+import:
+	org.bukkit.Bukkit
+	java.lang.Math
+	org.bukkit.World$Environment
+	
+options:
+	max_entities: 1800
+
+every 10 seconds:
+	if Bukkit.getServer().getAverageTickTime() is greater than 50:
+		loop all players:
+			loop animals in radius 64 around loop-value:
+				set {_excludeAnimals::%loop-value-2.getEntityId()%} to loop-value-2
+			loop monsters in radius 78 around loop-value:
+				set {_excludeMonsters::%loop-value-2.getEntityId()%} to loop-value-2
+
+		set {_animalslimit} to {@max_entities}*0.10
+		set {_monsterslimit} to {@max_entities}*0.5
+		set {_amountExcludedAnimals} to size of {_excludeAnimals::*}
+		set {_amountExcludedMonsters} to size of {_excludeMonsters::*}
+		set {_animals::*} to all animals
+		set {_sizeAnimals} to size of {_animals::*}
+		set {_monsters::*} to all monsters
+		set {_sizeMonsters} to size of {_monsters::*}
+
+		if {_sizeAnimals} is greater than {_animalslimit}:
+			set {_chance} to ({_sizeAnimals}-({_animalslimit}-{_amountExcludedAnimals}))/{_sizeAnimals}
+			loop {_animals::*}:
+				if Math.random() is greater than {_chance}:
+					continue
+				if loop-value.isInsideVehicle() is true:
+					continue
+				if loop-value.getCustomName() is set:
+					continue
+				if loop-value.isLeashed() is true:
+					continue
+				if owner of loop-value is set:
+					continue
+				if {_excludeAnimals::%loop-value.getEntityId()%} is set:
+					continue
+				loop-value-1.remove()
+				add 1 to {_i}
+		if {_sizeMonsters} is greater than {_monsterslimit}:
+			set {_chance} to ({_sizeMonsters}-({_monsterslimit}-{_amountExcludedMonsters}))/{_sizeMonsters}
+			loop {_monsters::*}:
+				if Math.random() is greater than {_chance}:
+					continue
+				if loop-value.isInsideVehicle() is true:
+					continue
+				if loop-value.getCustomName() is set:
+					continue
+				if loop-value.isLeashed() is true:
+					continue
+				set {_equip} to loop-value.getEquipment()
+				if {_equip}.getItemInHandDropChance() is 1:
+					continue
+				if {_equip}.getHelmetDropChance() is 1:
+					continue
+				if {_equip}.getChestplateDropChance() is 1:
+					continue
+				if {_equip}.getBootsDropChance() is 1:
+					continue
+				if {_equip}.getItemInMainHandDropChance() is 1:
+					continue
+				if {_equip}.getItemInOffHandDropChance() is 1:
+					continue
+				if {_equip}.getLeggingsDropChance() is 1:
+					continue
+
+				if {_excludeMonsters::%loop-value.getEntityId()%} is set:
+					continue
+
+				loop-value-1.remove()
+				add 1 to {_i}
+
+function optimizeSpawnRate():
+	set {_am} to amount of players
+	set {_simulationDistance} to round (10-(0.2*{_am}))
+	set {_viewDistance} to round (24-(0.6*{_am}))
+	set {_mobsPerPlayer} to {@max_entities}/{_am}
+	set {_spawnRange} to {_simulationDistance}*10
+	loop worlds:
+		set {_env} to loop-world.getEnvironment()
+		set simulation distance of loop-world to {_simulationDistance}
+		set view distance of loop-world to {_viewDistance}
+
+		set mob spawn range of loop-world to ({_simulationDistance}/1.5)
+
+		if {_mobsPerPlayer}*0.5 is greater than 150:
+			set monster spawn limit of loop-world to 150
+		else:
+			set monster spawn limit of loop-world to {_mobsPerPlayer}*0.45
+		if {_env} is Environment.NETHER:
+			set animal spawn limit of loop-world to {_mobsPerPlayer}*0.03
+			if {_mobsPerPlayer}*0.53 is greater than 400:
+				set monster spawn limit of loop-world to 400
+			else:
+				set monster spawn limit of loop-world to {_mobsPerPlayer}*0.53
+		else:
+			set animal spawn limit of loop-world to {_mobsPerPlayer}*0.10
+			set water animal spawn limit of loop-world to {_mobsPerPlayer}*0.05
+			set ambient spawn limit of loop-world to {_mobsPerPlayer}*0.027
+			set water ambient spawn limit of loop-world to {_mobsPerPlayer}*0.05
+			set water underground spawn limit of loop-world to {_mobsPerPlayer}*0.05
+
+		set monster activation range of loop-world to {_spawnRange}*0.2
+		set animal activation range of loop-world to {_spawnRange}*0.05
+		set misc activation range of loop-world to {_spawnRange}*0.05
+		set raider activation range of loop-world to {_spawnRange}*0.2
+		set water activation range of loop-world to {_spawnRange}*0.05
+		set flying monster activation range of loop-world to {_spawnRange}*0.15
+		set villager activation range of loop-world to {_spawnRange}*0.05
+
+		set ambient spawns per tick of loop-world to 600+{_am}*15
+		if {_env} is Environment.NETHER:
+			set animal spawns per tick of loop-world to 300+{_am}*50
+		else:
+			set animal spawns per tick of loop-world to 300+{_am}*15
+		set monster spawns per tick of loop-world to 1+{_am}*0.25
+		set water ambient spawns per tick of loop-world to 300+{_am}*15
+		set water animals spawns per tick of loop-world to 100+{_am}*5
+		set water underground spawns per tick of loop-world to 200+{_am}*5
+
+		set monster soft despawn range of loop-world to {_spawnRange}*0.6
+		set monster hard despawn range of loop-world to {_spawnRange}*0.8
+
+		set animal soft despawn range of loop-world to {_spawnRange}*0.4
+		set animal hard despawn range of loop-world to {_spawnRange}*0.8
+
+		set ambient soft despawn range of loop-world to {_spawnRange}*0.4
+		set ambient hard despawn range of loop-world to {_spawnRange}*0.5
+
+		set axolotl soft despawn range of loop-world to {_spawnRange}*0.4
+		set axolotl hard despawn range of loop-world to {_spawnRange}*0.8
+
+		set water underground soft despawn range of loop-world to {_spawnRange}*0.5
+		set water underground hard despawn range of loop-world to {_spawnRange}*0.8
+
+		set water animal soft despawn range of loop-world to {_spawnRange}*0.5
+		set water animal hard despawn range of loop-world to {_spawnRange}*0.8
+
+		set water ambient soft despawn range of loop-world to {_spawnRange}*0.5
+		set water ambient hard despawn range of loop-world to {_spawnRange}*0.8
+
+		set misc soft despawn range of loop-world to {_spawnRange}*0.4
+		set misc hard despawn range of loop-world to {_spawnRange}*0.6
+
+on load:
+	loop worlds:
+		set player tracking range of loop-world to 256
+		set animal tracking range of loop-world to 78
+		set monster tracking range of loop-world to 128
+		set misc tracking range of loop-world to 64
+		set other tracking range of loop-world to 96
+	optimizeSpawnRate()
+on join:
+	optimizeSpawnRate()
+on disconnect:
+	optimizeSpawnRate()
+		
+		
+		
+		
