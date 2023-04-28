@@ -1,0 +1,49 @@
+import:
+	org.bukkit.Bukkit
+
+on load:
+	set {-coreprotect::api} to Bukkit.getServer().getPluginManager().getPlugin("CoreProtect").getAPI()
+
+function blockLookup(b: block, time: number = 0) :: texts:
+	return ...{-coreprotect::api}.blockLookup({_b},{_time})
+function sessionLookup(user: text, time: number = 0) :: texts:
+	return ...{-coreprotect::api}.sessionLookup({_user},{_time})
+function queueLookup(b: block) :: texts:
+	return ...{-coreprotect::api}.queueLookup({_b})
+
+function logChat(p: player, m: text) :: boolean:
+	return {-coreprotect::api}.logChat({_p},{_m})
+function logCommand(p: player, c: text) :: boolean:
+	return {-coreprotect::api}.logCommand({_p},{_c})
+function logPlacement(user: text, b: block) :: boolean:
+	return {-coreprotect::api}.logPlacement({_user},location of {_b}, {_b}.getType(), {_b}.getBlockData())
+function logRemoval(user: text, b: block) :: boolean:
+	return {-coreprotect::api}.logRemoval({_user},location of {_b}, {_b}.getType(), {_b}.getBlockData())
+function logContainerTransaction(user: text, l: location) :: boolean:
+	return {-coreprotect::api}.logInteraction({_user},{_l})
+function logInteraction(user: text, l: location) :: boolean:
+	return {-coreprotect::api}.logContainerTransaction({_user},{_l})
+
+function hasPlaced(user: text, b: block, time: number = 0, offset: number = 0) :: boolean:
+	return {-coreprotect::api}.hasPlaced({_user}, {_b}, {_time}, {_offset})
+function hasRemoved(user: text, b: block, time: number = 0, offset: number = 0) :: boolean:
+	return {-coreprotect::api}.hasRemoved({_user}, {_b}, {_time}, {_offset})
+
+function parseResult(result: texts) :: object:
+	return {-coreprotect::api}.parseResult({_result::*})
+function resultLocation(result: object) :: location:
+	return location at ({_result}.getX()), ({_result}.getY()), ({_result}.getZ()) in world({_result}.worldName())
+function resultActionId(result: object) :: number:
+	return {_result}.getActionId()
+function resultActionString(result: object) :: number:
+	return {_result}.getActionString()
+function resultTimestamp(result: object) :: number:
+	return {_result}.getTimestamp()
+function resultPlayer(result: object) :: text:
+	return {_result}.getPlayer()
+function resultIsRolledBack(result: object) :: boolean:
+	return {_result}.isRolledBack()
+function resultBlock(result: object) :: object:
+	return {_result}.getBlockData()
+function resultGetType(result: object) :: object:
+	return {_result}.getType()
