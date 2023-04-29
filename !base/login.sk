@@ -1,0 +1,180 @@
+import:
+	java.io.BufferedReader
+	java.io.ByteArrayInputStream
+	java.io.ByteArrayOutputStream
+	java.io.InputStreamReader
+	java.util.zip.GZIPInputStream
+	java.util.zip.GZIPOutputStream
+	java.util.Base64
+	java.lang.StringBuilder
+
+# allow compress text into base64 gzip data
+function gzipCompress(string: text) :: text:
+	set {_obj} to new ByteArrayOutputStream()
+	set {_gzip} to new GZIPOutputStream({_obj})
+	{_gzip}.write({_string}.getBytes("UTF-8"))
+	{_gzip}.flush()
+	{_gzip}.close()
+	return Base64.getEncoder().encodeToString({_obj}.toByteArray())
+
+# allow decompress base64 gzip data into text
+function gzipDecompress(compressed: text) :: text:
+	set {_compressed} to Base64.getDecoder().decode({_compressed})
+	set {_outStr} to new StringBuilder()
+	set {_gis} to new GZIPInputStream(new ByteArrayInputStream({_compressed}))
+	set {_bufferedReader} to new BufferedReader(new InputStreamReader({_gis}, "UTF-8"))
+	set {_line} to {_bufferedReader}.readLine()
+	while {_line} is set:
+		{_outStr}.append({_line})
+		set {_line} to {_bufferedReader}.readLine()
+	return {_outStr}.toString()
+
+# allow to save player's data into database
+function savePlayerData(p:player):
+	set {_server} to server's name
+	set {_uuid} to uuid of {_p}
+	
+	set {_advancementsJson} to gzipCompress({_p}.getJsonAdvancements())
+	set {_statisticsJson} to gzipCompress({_p}.getJsonStats())
+	set {_playerDataNBT} to gzipCompress({_p}.getNBTStringPlayerData())
+	
+	execute "INSERT INTO mc_playerdata VALUES('%{_uuid}%','%{_server}%','%{_playerDataNBT}%','%{_advancementsJson}%') ON DUPLICATE KEY UPDATE playerdata='%{_playerDataNBT}%', advancements='%{_advancementsJson}%'" in database
+	execute "INSERT INTO mc_playerstats VALUES('%{_uuid}%','%{_statisticsJson}%') ON DUPLICATE KEY UPDATE stats='%{_statisticsJson}%'" in database
+
+import:
+	net.minecraft.nbt.MojangsonParser
+
+# load player's data
+function loadPlayerData(p:player):
+	set {_server} to server's name
+	set {_uuid} to uuid of {_p}
+	execute "SELECT d.playerdata,s.stats,d.advancements FROM mc_playerdata AS d JOIN mc_playerstats AS s ON d.id=s.id WHERE d.id='%{_uuid}%' AND d.server='%{_server}%'" in database and store the result in {_data::*}
+	if {_data::playerdata::1} and {_data::stats::1} and {_data::advancements::1} is set:
+		set {_data::playerdata::1} to gzipDecompress({_data::playerdata::1})
+		set {_data::stats::1} to gzipDecompress({_data::stats::1})
+		set {_data::advancements::1} to gzipDecompress({_data::advancements::1})
+		{_p}.setPlayerDataFromNBT(MojangsonParser.a({_data::playerdata::1}))
+		{_p}.setAdvancementsFromJson({_data::advancements::1})
+		{_p}.setStatsFromJson({_data::stats::1})
+	else:
+		set {_p}'s gamemode to survival
+		teleport {_p} to spawn point of main world
+
+custom event "unauthorize":
+	pattern: unauthorize
+	event-values: player
+
+function logout(p: player, saveData: boolean = true):
+	set {_uuid} to uuid of {_p}
+	if {-p::%{_uuid}%::authorized} is true:
+		deop {_p}
+		if {_saveData} is true:
+			savePlayerData({_p})
+		set {_l::player} to {_p}
+		call custom event "unauthorize" with event-values {_l::*}
+		teleport {_p} to spawn point of main world
+		clear {_p}'s inventory
+		set {_p}'s gamemode to spectator
+	delete {-p::%{_uuid}%::*}
+
+on disconnect with priority HIGHEST:
+	logout(player)
+
+custom event "authorize":
+	pattern: authorize
+	event-values: player
+
+function authorize(p: player, firstTry: boolean = false):
+	set {_uuid} to uuid of {_p}
+	if {-p::%{_uuid}%::authorized} is true:
+		stop
+
+	execute "SELECT a.id as id,a.timezone as timezone, a.ip as ip,a.operator as operator,a.inactive as inactive,e.end as exception FROM mc_accounts AS a LEFT JOIN mc_exceptions AS e ON a.id=e.id WHERE a.id='%{_uuid}%'" in database and store the result in {_data::*}
+
+	if {_data::id::1} is not set:
+		send "Перейдите в наш дискорд для регистрации" to {_p}
+		stop
+
+	set {_ip} to ip of {_p}
+	set {-p::%{_uuid}%::registered} to true
+
+	if {_data::inactive::1} is true:
+		send "Перейдите в дискорд для восстановления аккаунта" to {_p}
+		stop
+
+	if {_data::exception::1} is greater than unix timestamp of now:
+		send "Вы были заблокированны на проекте" to {_p}
+		stop
+
+	if {_firstTry} is true:
+		if {_data::ip::1} is not {_ip}:
+			send "Перейдите в дискорд для авторизации, либо воспользуйтесь одноразовым кодом для входа" to {_p}
+			stop
+	if {_data::ip::1} is not {_ip}:
+		geolocation of {_p} stored in {_geodata::*}
+		execute "UPDATE mc_accounts SET ip='%{_ip}%', country='%{_geodata::country}%', city='%{_geodata::city}%', last_join=UNIX_TIMESTAMP() WHERE id='%{_uuid}%'" in database
+		set {_data::timezone::1} to {_geodata::timezone}
+	else:
+		execute "UPDATE mc_accounts SET last_join=UNIX_TIMESTAMP() WHERE id='%{_uuid}%'" in database
+	set {-p::%{_uuid}%::timezone} to {_data::timezone::1}
+	set {-p::%{_uuid}%::authorized} to true
+	loadPlayerData({_p})
+	if {_data::operator::1} is true:
+		reset permissions of {_p}
+		op {_p}
+	else:
+		set {_l} to 0
+	set {_l::player} to {_p}
+	call custom event "authorize" with event-values {_l::*}
+
+on join with priority LOWEST:
+	deop player
+	delete player's permissions
+	set player's gamemode to spectator
+	authorize(player,true)
+
+import:
+	org.bukkit.Bukkit
+	java.util.UUID
+
+on signal "exceptioned":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		logout({_p})	
+on signal "unexceptioned":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		authorize({_p},true)
+on signal "authorize":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		authorize({_p})
+on signal "logout":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		logout({_p})
+on signal "link_account":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		logout({_p},false)
+on signal "unlink_account":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		logout({_p},false)
+on signal "change_nick":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		logout({_p},false)
+on signal "leaved":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		logout({_p})
+on signal "inactive_remove":
+	set {_p} to Bukkit.getPlayer(UUID.fromString(event-signal-value))
+	if {_p} is set:
+		authorize({_p},true)
+
+on world saving with priority LOWEST:
+	loop all players:
+		if {-p::%uuid of loop-player%::authorized} is true:
+			savePlayerData(loop-player)
