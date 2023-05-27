@@ -5,89 +5,67 @@ import:
 
 on rightclick with any shulker box:
   player is not sneaking
-  
-  # old reflect bug with compare enums
-  (Action.LEFT_CLICK_AIR and Action.RIGHT_CLICK_AIR) contains event.getAction()
-
-  if clicked entity is set: 
-    clicked entity is instance of InventoryHolder
+  (Action.LEFT_CLICK_AIR) and (Action.RIGHT_CLICK_AIR) contains event.getAction()
+  if clicked entity is instance of InventoryHolder:
     stop
-
   play sound "block.shulker_box.open" with volume 2 and pitch 1 to player
-
-  # open inventory of blockState to player
   set {_blockState} to event-item.getItemMeta().getBlockState()
-  open inventory of {_blockState} to player
-  
-  # Need fetch inventory slot index of this item
-  # ( Can't get this item after rightclick.                                                         )
-  # ( Saving an item to a variable in subsequent comparisons will not point to the same memory area.)
-  # ( Same as comparing with NBT - can't fetch exact opened shulker.                                )
-  # Then we cancel manipulations with opened shulker and compare needed shulker by index of inventory slot. 
+  open inventory of {_blockState} to player 
   if event.getHand() is EquipmentSlot.HAND:
     set {-betterShulkerBoxes::%uuid of player%::slotIndex} to (inventory of player).getHeldItemSlot()
   else:
     set {-betterShulkerBoxes::%uuid of player%::slotIndex} to 40
-
-  # save blockstate also because it has our opened inventory
+  set {-betterShulkerBoxes::%uuid of player%::item} to event-item
   set {-betterShulkerBoxes::%uuid of player%::blockState} to {_blockState}
 
-# handle if shulker in off hand swapped
 on swap hand item:
   {-betterShulkerBoxes::%uuid of player%::slotIndex} is set
+  (inventory of player).getItem({-betterShulkerBoxes::%uuid of player%::slotIndex}) is player's held item
   cancel event
 
-# handle drop shulker
 on drop:
   {-betterShulkerBoxes::%uuid of player%::slotIndex} is set
+  (inventory of player).getItem({-betterShulkerBoxes::%uuid of player%::slotIndex}) is not set
   cancel event
-
-on inventory click:
-  {-betterShulkerBoxes::%uuid of player%::slotIndex} is set
-
-  # handle click or hotbar keys on opened shulker 
-  # (we can't allow this because can't get exact shulker what opened from inventory, then we get this by index of slot in player's inventory)
-  {-betterShulkerBoxes::%uuid of player%::slotIndex} is index of clicked slot or hotbar button or hotbar button+41
-  # can't move shulker to shulker, so no need to close inventory with this case
-  inventory action is not instant move
-  cancel event
-  # stupid tick delay because of client bugs
-  wait 1 tick
-  close player's inventory
 
 on inventory close:
   {-betterShulkerBoxes::%uuid of player%::slotIndex} is set
   play sound "block.shulker_box.close" with volume 2 and pitch 1 to player
-
-  # replace old shulker with new, changed shulker
   set {_openedShulker} to slot {-betterShulkerBoxes::%uuid of player%::slotIndex} of player's inventory
   set {_itemMeta} to {_openedShulker}.getItemMeta()
-  
-  # check if there are any changes, no need show this shit animation of item changing
   if (inventory of {_itemMeta}.getBlockState()).equals(inventory of {-betterShulkerBoxes::%uuid of player%::blockState}) is false:
     {_itemMeta}.setBlockState({-betterShulkerBoxes::%uuid of player%::blockState})
     {_openedShulker}.setItemMeta({_itemMeta})
     set slot {-betterShulkerBoxes::%uuid of player%::slotIndex} of player's inventory to {_openedShulker}
-  
   delete {-betterShulkerBoxes::%uuid of player%::*}
 
-# adding items to shulker box with mechanic like in bundles
+on inventory click:
+  {-betterShulkerBoxes::%uuid of player%::slotIndex} is set
+  event-inventory is not player's current inventory
+  (index of clicked slot) and (hotbar button) and (hotbar button+41) contains {-betterShulkerBoxes::%uuid of player%::slotIndex} 
+  inventory action is not instant move
+  cancel event
+
+on death of player:
+  {-betterShulkerBoxes::%uuid of victim%::slotIndex} is set
+  set {_index} to event.getDrops().indexOf({-betterShulkerBoxes::%uuid of victim%::item})
+  set {_itemMeta} to {-betterShulkerBoxes::%uuid of victim%::item}.getItemMeta()
+  {_itemMeta}.setBlockState({-betterShulkerBoxes::%uuid of victim%::blockState})
+  event.getDrops().get({_index}).setItemMeta({_itemMeta})
+  delete {-betterShulkerBoxes::%uuid of victim%::*}
+
 on inventory click:
   cursor slot of player is any shulker box
   click type is right mouse button
   event-item is not any shulker box
-
   cancel event
-
   set {_item} to cursor slot of player
   set {_itemMeta} to {_item}.getItemMeta()
   set {_blockState} to {_itemMeta}.getBlockState()
   set {_inventory} to inventory of {_blockState}
-
   if event-item is not air:
     {_inventory} has enough space for event-item
     play sound "item.bundle.insert" with volume 2 and pitch 1 to player
-    
     add event-item to {_inventory}
     set clicked slot to air
     {_itemMeta}.setBlockState({_blockState})
@@ -98,12 +76,9 @@ on inventory click:
     loop 27 times:
       set {_loopedItem} to slot 27-loop-value of {_inventory}
       {_loopedItem} is not air
-      
       set clicked slot to {_loopedItem}
       set slot 27-loop-value of {_inventory} to air
-      
       {_itemMeta}.setBlockState({_blockState})
       {_item}.setItemMeta({_itemMeta})
       set cursor slot of player to {_item}
-
       stop
