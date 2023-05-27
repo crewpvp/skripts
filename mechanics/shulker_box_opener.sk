@@ -2,6 +2,8 @@ import:
   org.bukkit.inventory.InventoryHolder
   org.bukkit.event.block.Action
   org.bukkit.inventory.EquipmentSlot
+  org.bukkit.event.inventory.InventoryType
+  org.bukkit.inventory.HorseInventory
 
 on rightclick with any shulker box:
   player is not sneaking
@@ -46,8 +48,21 @@ on inventory click:
   inventory action is not instant move
   cancel event
 
+on inventory click:
+  {-betterShulkerBoxes::%uuid of player%::slotIndex} is not index of clicked slot
+  event-inventory is inventory of player
+  event-item is any shulker box
+  click type is swap offhand
+  play sound "block.shulker_box.open" with volume 2 and pitch 1 to player
+  set {_blockState} to event-item.getItemMeta().getBlockState()
+  open inventory of {_blockState} to player 
+  set {-betterShulkerBoxes::%uuid of player%::slotIndex} to index of clicked slot
+  set {-betterShulkerBoxes::%uuid of player%::item} to event-item
+  set {-betterShulkerBoxes::%uuid of player%::blockState} to {_blockState}
+
 on death of player:
   {-betterShulkerBoxes::%uuid of victim%::slotIndex} is set
+  gamerule keepInventory of world of victim is false
   set {_index} to event.getDrops().indexOf({-betterShulkerBoxes::%uuid of victim%::item})
   set {_itemMeta} to {-betterShulkerBoxes::%uuid of victim%::item}.getItemMeta()
   {_itemMeta}.setBlockState({-betterShulkerBoxes::%uuid of victim%::blockState})
@@ -58,6 +73,7 @@ on inventory click:
   cursor slot of player is any shulker box
   click type is right mouse button
   event-item is not any shulker box
+  event.getSlotType() is not InventoryType.SlotType.RESULT
   cancel event
   set {_item} to cursor slot of player
   set {_itemMeta} to {_item}.getItemMeta()
@@ -72,6 +88,8 @@ on inventory click:
     {_item}.setItemMeta({_itemMeta})
     set cursor slot of player to {_item}
   else:
+    event.getSlotType() is not InventoryType.SlotType.ARMOR
+    event-inventory is not instance of HorseInventory 
     play sound "item.bundle.remove_one" with volume 2 and pitch 1 to player
     loop 27 times:
       set {_loopedItem} to slot 27-loop-value of {_inventory}
