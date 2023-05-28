@@ -4,6 +4,8 @@ import:
   org.bukkit.inventory.EquipmentSlot
   org.bukkit.event.inventory.InventoryType
   org.bukkit.inventory.HorseInventory
+  org.bukkit.Bukkit
+  org.bukkit.Material
 
 on rightclick with any shulker box:
   player is not sneaking
@@ -12,13 +14,15 @@ on rightclick with any shulker box:
     stop
   play sound "block.shulker_box.open" with volume 2 and pitch 1 to player
   set {_blockState} to event-item.getItemMeta().getBlockState()
-  open inventory of {_blockState} to player 
+  set {_inventory} to Bukkit.createInventory(player,InventoryType.SHULKER_BOX)
+  {_inventory}.setContents((inventory of {_blockState}).getContents())
+  open {_inventory} to player
   if event.getHand() is EquipmentSlot.HAND:
     set {-betterShulkerBoxes::%uuid of player%::slotIndex} to (inventory of player).getHeldItemSlot()
   else:
     set {-betterShulkerBoxes::%uuid of player%::slotIndex} to 40
   set {-betterShulkerBoxes::%uuid of player%::item} to event-item
-  set {-betterShulkerBoxes::%uuid of player%::blockState} to {_blockState}
+  set {-betterShulkerBoxes::%uuid of player%::inventory} to {_inventory}
 
 on swap hand item:
   {-betterShulkerBoxes::%uuid of player%::slotIndex} is set
@@ -35,8 +39,10 @@ on inventory close:
   play sound "block.shulker_box.close" with volume 2 and pitch 1 to player
   set {_openedShulker} to slot {-betterShulkerBoxes::%uuid of player%::slotIndex} of player's inventory
   set {_itemMeta} to {_openedShulker}.getItemMeta()
-  if (inventory of {_itemMeta}.getBlockState()).equals(inventory of {-betterShulkerBoxes::%uuid of player%::blockState}) is false:
-    {_itemMeta}.setBlockState({-betterShulkerBoxes::%uuid of player%::blockState})
+  set {_blockState} to {_itemMeta}.getBlockState()
+  (inventory of {_blockState}).setContents({-betterShulkerBoxes::%uuid of player%::inventory}.getContents())
+  if (inventory of {_itemMeta}.getBlockState()).equals(inventory of {_blockState}) is false:
+    {_itemMeta}.setBlockState({_blockState})
     {_openedShulker}.setItemMeta({_itemMeta})
     set slot {-betterShulkerBoxes::%uuid of player%::slotIndex} of player's inventory to {_openedShulker}
   delete {-betterShulkerBoxes::%uuid of player%::*}
@@ -52,20 +58,25 @@ on inventory click:
   {-betterShulkerBoxes::%uuid of player%::slotIndex} is not index of clicked slot
   event-inventory is inventory of player
   event-item is any shulker box
-  click type is swap offhand
+  click type is drop key
+  cancel event
   play sound "block.shulker_box.open" with volume 2 and pitch 1 to player
   set {_blockState} to event-item.getItemMeta().getBlockState()
-  open inventory of {_blockState} to player 
+  set {_inventory} to Bukkit.createInventory(player,InventoryType.SHULKER_BOX)
+  {_inventory}.setContents((inventory of {_blockState}).getContents())
+  open {_inventory} to player
   set {-betterShulkerBoxes::%uuid of player%::slotIndex} to index of clicked slot
   set {-betterShulkerBoxes::%uuid of player%::item} to event-item
-  set {-betterShulkerBoxes::%uuid of player%::blockState} to {_blockState}
+  set {-betterShulkerBoxes::%uuid of player%::inventory} to {_inventory}
 
 on death of player:
   {-betterShulkerBoxes::%uuid of victim%::slotIndex} is set
-  gamerule keepInventory of world of victim is false
+  (world of victim).getGameRuleValue("keepInventory") is "false"
   set {_index} to event.getDrops().indexOf({-betterShulkerBoxes::%uuid of victim%::item})
   set {_itemMeta} to {-betterShulkerBoxes::%uuid of victim%::item}.getItemMeta()
-  {_itemMeta}.setBlockState({-betterShulkerBoxes::%uuid of victim%::blockState})
+  set {_blockState} to {_itemMeta}.getBlockState()
+  (inventory of {_blockState}).setContents({-betterShulkerBoxes::%uuid of victim%::inventory}.getContents())
+  {_itemMeta}.setBlockState({_blockState})
   event.getDrops().get({_index}).setItemMeta({_itemMeta})
   delete {-betterShulkerBoxes::%uuid of victim%::*}
 
@@ -79,7 +90,7 @@ on inventory click:
   set {_itemMeta} to {_item}.getItemMeta()
   set {_blockState} to {_itemMeta}.getBlockState()
   set {_inventory} to inventory of {_blockState}
-  if event-item is not air:
+  if event-item.getType() is not Material.AIR:
     {_inventory} has enough space for event-item
     play sound "item.bundle.insert" with volume 2 and pitch 1 to player
     add event-item to {_inventory}
