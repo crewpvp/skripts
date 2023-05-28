@@ -90,7 +90,11 @@ on inventory click:
   set {_itemMeta} to {_item}.getItemMeta()
   set {_blockState} to {_itemMeta}.getBlockState()
   set {_inventory} to inventory of {_blockState}
-  if event-item.getType() is not Material.AIR:
+  if event-item is set:
+    set {_type} to event-item.getType()
+  else:
+    set {_type} to Material.AIR
+  if {_type} is not Material.AIR:
     {_inventory} has enough space for event-item
     play sound "item.bundle.insert" with volume 2 and pitch 1 to player
     add event-item to {_inventory}
