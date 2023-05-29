@@ -91,26 +91,40 @@ function calcItemDamage(item: item) :: number:
 	if {_level} is set:
 		return {_damage}+({_level}*0.5)
 	return {_damage}
-function calcTime(item:item, block: block) :: number:
-	if {_item} is (wood pickaxe) or (wood axe):
-		set {_time} to 2
-	else if {_item} is (stone pickaxe) or (stone axe):
-		set {_time} to 4
-	else if {_item} is (iron pickaxe) or (iron axe):
-		set {_time} to 6
-	else if {_item} is (diamond pickaxe) or (diamond axe):
-		set {_time} to 8
-	else if {_item} is (netherite pickaxe) or (netherite axe):
-		set {_time} to 9
+function calcTime(item:item,block: block, player: player = {_null}) :: number:
+	if ({_block}.getBlockData().isPreferredTool({_item}) is true):
+		if {_item} is (wood pickaxe) or (wood axe):
+			set {_toolMultiplier} to 2
+		else if {_item} is (stone pickaxe) or (stone axe):
+			set {_toolMultiplier} to 4
+		else if {_item} is (iron pickaxe) or (iron axe):
+			set {_toolMultiplier} to 6
+		else if {_item} is (diamond pickaxe) or (diamond axe):
+			set {_toolMultiplier} to 8
+		else if {_item} is (netherite pickaxe) or (netherite axe):
+			set {_toolMultiplier} to 9
+		else if {_item} is (gold pickaxe) or (gold axe):
+			set {_toolMultiplier} to 12	
+		else:
+			set {_toolMultiplier} to 1
+		set {_harvestMultiplier} to 30
 	else:
-		set {_time} to 12	
+		set {_toolMultiplier} to 1
+		set {_harvestMultiplier} to 100
+	if {_player} is set:
+		set {_haste} to {_player}.getPotionEffect(PotionEffectType.FAST_DIGGING)
+		if {_haste} is set:
+			set {_toolMultiplier} to {_toolMultiplier} * (0.2 * {_haste}.getAmplifier() + 1)
+		set {_miningFatigue} to {_player}.getPotionEffect(PotionEffectType.SLOW_DIGGING)
+		if {_miningFatigue} is set:
+			set {_toolMultiplier} to {_toolMultiplier} * (0.3 ^ min({_miningFatigue}.getAmplifier(),4))
 	set {_level} to level of efficiency of {_item}
-	add ({_level}*{_level} + 1) to {_time}
-	set {_time} to ({_time}/{_block}.getType().getHardness())/30
+	if {_level} is set:
+		add (({_level}*{_level}) + 1) to {_toolMultiplier}
+	set {_time} to ({_toolMultiplier}/{_block}.getType().getHardness())/{_harvestMultiplier}
 	if {_time} > 1:
 		return 0
-
-	return round up (1.75/{_time})
+	return round up (1/{_time})
 function removeDurability(item: item) :: boolean:
 	set {_level} to level of unbreaking of {_item}
 	if {_level} is set:

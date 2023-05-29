@@ -178,7 +178,7 @@ on dispense:
 		canBreak({_block}) is true
 
 		set {-dispensers::active::%location of event-block%} to true
-		break {_block} with event-item with calcTime(event-item,{_block}) and store drop in {_d::*}
+		break {_block} with event-item with calcTime(event-item,({_block})) and store drop in {_d::*}
 		drop {_d::*} at {_block} without velocity
 		wait 1 tick
 		delete {-dispensers::active::%location of event-block%}
@@ -235,7 +235,7 @@ on dispense:
 				delete {_inactive}
 				loop items in inventory of {_block}:
 					if loop-item is {_pickaxe}:
-						break {_target} with {_pickaxe} with calcTime({_pickaxe},{_target}) and store drop in {_d::*}
+						break {_target} with {_pickaxe} with calcTime({_pickaxe},({_target})) and store drop in {_d::*}
 						if {_nopipe} is false:
 							remove pipe({_pipe},{_refacing},{_d::*}) from {_d::*}
 						drop {_d::*} at {_target} without velocity
