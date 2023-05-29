@@ -91,7 +91,7 @@ function calcItemDamage(item: item) :: number:
 	if {_level} is set:
 		return {_damage}+({_level}*0.5)
 	return {_damage}
-function calcTime(item:item,block: block, player: player = {_null}) :: number:
+function calcTime(item:item,block: block) :: number:
 	if ({_block}.getBlockData().isPreferredTool({_item}) is true):
 		if {_item} is (wood pickaxe) or (wood axe):
 			set {_toolMultiplier} to 2
@@ -111,13 +111,6 @@ function calcTime(item:item,block: block, player: player = {_null}) :: number:
 	else:
 		set {_toolMultiplier} to 1
 		set {_harvestMultiplier} to 100
-	if {_player} is set:
-		set {_haste} to {_player}.getPotionEffect(PotionEffectType.FAST_DIGGING)
-		if {_haste} is set:
-			set {_toolMultiplier} to {_toolMultiplier} * (0.2 * {_haste}.getAmplifier() + 1)
-		set {_miningFatigue} to {_player}.getPotionEffect(PotionEffectType.SLOW_DIGGING)
-		if {_miningFatigue} is set:
-			set {_toolMultiplier} to {_toolMultiplier} * (0.3 ^ min({_miningFatigue}.getAmplifier(),4))
 	set {_level} to level of efficiency of {_item}
 	if {_level} is set:
 		add (({_level}*{_level}) + 1) to {_toolMultiplier}

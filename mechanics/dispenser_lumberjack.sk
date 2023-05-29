@@ -15,7 +15,7 @@ on dispense:
 	set {_block} to event-block.getRelative({_facing})
 
 	set {_type} to {_block}.getType()
-	set {_time} to calcTime(event-item, ({_block}))
+	set {_time} to calcTime(event-item, {_block})
 	if {_type} is Material.OAK_LOG:
 		set {_allowdown} to false
 		set {_types::*} to Material.OAK_LOG
