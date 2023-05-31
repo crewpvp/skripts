@@ -8,7 +8,9 @@ import:
   org.bukkit.Material
 
 on rightclick with any shulker box:
+  {-betterShulkerBoxes::%uuid of player%::slotIndex} is not set
   player is not sneaking
+
   (Action.LEFT_CLICK_AIR) and (Action.RIGHT_CLICK_AIR) contains event.getAction()
   if clicked entity is instance of InventoryHolder:
     stop
