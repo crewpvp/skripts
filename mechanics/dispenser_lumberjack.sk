@@ -5,7 +5,7 @@ import:
 on dispense:
 	event is not cancelled
 	event-block is dispenser
-	event-item is any axe
+	(Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE, Material.NETHERITE_AXE) contains event-item.getType() 
 	cancel event
 	{-dispensers::active::%location of event-block%} is not set
 
@@ -13,7 +13,6 @@ on dispense:
 	
 	set {_facing} to event-block.getBlockData().getFacing()
 	set {_block} to event-block.getRelative({_facing})
-
 	set {_type} to {_block}.getType()
 	set {_time} to calcTime(event-item, {_block})
 	if {_type} is Material.OAK_LOG:
@@ -43,6 +42,13 @@ on dispense:
 		loop blocks above event-block:
 			if loop-block is warped wart block:
 				set {_tree} to warped fungus
+				stop loop
+	else if {_type} is Material.CHERRY_LOG:
+		set {_allowdown} to false
+		set {_types::*} to Material.CHERRY_LOG
+		loop blocks above event-block:
+			if loop-block is cherry leaves:
+				set {_tree} to cherry sapling
 				stop loop
 	else if {_type} is Material.DARK_OAK_LOG:
 		set {_allowdown} to false
