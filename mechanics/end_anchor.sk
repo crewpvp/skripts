@@ -14,7 +14,7 @@ on rightclick on respawn anchor:
 				stop
 		else:
 			cancel event
-		send "&fТочка возрождения установлена"
+		send "&fТочка возрождения установлена" to player
 		player.setBedSpawnLocation(location of player,true)
 
 on PlayerDeathEvent:

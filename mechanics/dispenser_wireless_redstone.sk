@@ -8,7 +8,7 @@ on dispense:
 	cancel event
 	set {_facing} to event-block.getBlockData().getFacing()
 	set {_block} to event-block.getRelative({_facing})
-	set {_dir} to {_facing}.getDirection() // vector(4,4,4)
+	set {_dir} to {_facing}.getDirection() / vector(4,4,4)
 	loop (amount of redstone in inventory of event-block+1)/2 times:
 		if {_block}.getType() is Material.TARGET:
 			stop loop

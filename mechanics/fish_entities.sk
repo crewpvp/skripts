@@ -20,6 +20,6 @@ on fish:
 	set {_loc} to location of event.getHook()
 	set {_y} to 8*(difference between (y coord of {_loc}) and (y coord of player))/30
 	set {_ent} to player.getWorld().spawnEntity({_loc}, {_s})
-	set {_vec} to (vector between {_ent} and player) // (vector 8,3+{_y},8)
+	set {_vec} to (vector between {_ent} and player) / (vector 8,3+{_y},8)
 	push {_ent} {_vec}
 		

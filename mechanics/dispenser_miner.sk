@@ -128,8 +128,8 @@ function getScheme(loc1: location, loc2: location, dir1: object, dir2: object) :
 
 function getPath(loc1: location, loc2: location,dir1: object, dir2: object, dir3: object) :: locations:
 	set {_vec} to (vector between {_loc1} and {_loc2})
-	set {_loop1} to vector length of ({_vec} ** {_dir2}.getDirection())+1
-	set {_loop2} to vector length of ({_vec} ** {_dir1}.getDirection())
+	set {_loop1} to vector length of ({_vec} * {_dir2}.getDirection())+1
+	set {_loop2} to vector length of ({_vec} * {_dir1}.getDirection())
 	set {_block} to block at {_loc1}.add({_dir3}.getDirection())
 	loop {_loop1} times:
 		loop {_loop2} times:
