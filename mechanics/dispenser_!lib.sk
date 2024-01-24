@@ -31,7 +31,7 @@ effect break %block% (with|by) %item% (with|for) %number% [(1¦and store drop in
 		#logBreak(expr-1)
 		if {_type} is expr-1.getType():
 			set block at expr-1 to air
-			set raw exprs-4 to {_drops::*} if parse mark is 1
+			set the raw exprs-4 to {_drops::*} if parse mark is 1
 		continue
 function calcDamage(damage: number, entity: entity, type: text = "ENVIRONMENTAL") :: number:
 	# damage types:
