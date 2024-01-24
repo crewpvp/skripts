@@ -34,7 +34,7 @@ effect discord[[ ]api] fetch (member|user) %string% and store [the] result in %o
 				if expr-1.equals({_nick}):
 					set {_id} to loop-value.replaceAll("^(.*?)""id"": """, "").replaceAll(""".*", "") parsed as number
 					stop loop
-		set raw expr-2 to {_id}
+		set the raw expr-2 to {_id}
 		continue
 
 effect discord[[ ]api] remove role[s] %numbers% from (member|user) %number%:
@@ -58,7 +58,7 @@ effect discord[[ ]api] fetch (member|user)['s] %number%['s] tag and store [the] 
 			set {_tag} to {_resp}.replaceAll("^(.*?)""username"": """, "").replaceAll(""", .*", "")
 			set {_discriminator} to {_resp}.replaceAll("^(.*?)""discriminator"": """, "").replaceAll(""", .*", "")
 			set {_tag} to "%{_tag}%##%{_discriminator}%"
-		set raw expr-2 to {_tag}
+		set the raw expr-2 to {_tag}
 		continue 
 
 expression discord[[ ]api] (0¦role|1¦(member|user)) permission %number% [to] [allow %-strings%] [[and] deny %-strings%]:
@@ -89,10 +89,10 @@ effect discord[[ ]api] create text channel named %string% [at position %-number%
 		set {_body} to "{""type"":0,""name"":""%expr-1%""%{_position}%%{_permissions}%%{_category}%}"
 		set {_headers::*} to (request header "Content-Type" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
 		async request "POST" to url "https://discord.com/api/v10/guilds/%{-discord::guildid}%/channels" with headers {_headers::*} and body {_body} and store the result in {_resp} and code in {_code}
-		if raw expr-5 is set:
+		if the raw expr-5 is set:
 			if {_code} is 200:
 				set {_id} to {_resp}.replaceAll("^(.*?)""id"": """, "").replaceAll(""", .*", "") parsed as number
-			set raw expr-5 to {_id}
+			set the raw expr-5 to {_id}
 
 effect discord[[ ]api] send message to channel %number% [with content %-strings%] [(with|and) embed[s] %-texts%] [(with|and) component[s] %-texts%] [and store [the] result in %-object%]:
 	trigger:
@@ -127,10 +127,10 @@ effect discord[[ ]api] send message to channel %number% [with content %-strings%
 		set {_body} to "{""tts"":false%{_content}%%{_embeds}%%{_components}%}"
 		set {_headers::*} to (request header "Content-Type" "application/json"), (request header "Authorization" "Bot %{-discord::token}%")
 		async request "POST" to url "https://discord.com/api/v10/channels/%expr-1%/messages" with headers {_headers::*} and body {_body} and store the result in {_resp} and code in {_code}
-		if raw expr-5 is set:
+		if the raw expr-5 is set:
 			if {_code} is 200:
 				set {_id} to {_resp}.replaceAll("^(.*?)""id"": """, "").replaceAll(""", .*", "") parsed as number
-			set raw expr-5 to {_id}
+			set the raw expr-5 to {_id}
 
 expression discord[[ ]api] button [with] label[ed] %text% [(with|and) (color|style) %-number/text%] (with|and) [custom] id %text%:
 	get:
