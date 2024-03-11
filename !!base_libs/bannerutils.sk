@@ -1,0 +1,33 @@
+#Made by .lotzy
+#Examples:
+#give banner with base color "white" with pattern (pattern "piglin" and color "red") to player
+#send color of banner player's tool to player
+#send patterns of banner player's tool to player
+
+import:
+	org.bukkit.DyeColor
+	org.bukkit.block.banner.PatternType
+	org.bukkit.block.banner.Pattern
+	org.bukkit.inventory.ItemStack
+	org.bukkit.Material
+		
+expression pattern[s] [with type] %string% (and|with) color %string%:
+	get:
+		return new Pattern(DyeColor.valueOf(expr-2 in uppercase), PatternType.valueOf(expr-1 in uppercase))
+
+expression banner with base color %string% [(and|with) pattern[s] %-objects%]:
+	get:
+		set {_i} to new ItemStack(Material.valueOf("%expr-1 in uppercase%_BANNER"),1)
+		set {_m} to {_i}.getItemMeta()
+		loop exprs-2:
+			{_m}.addPattern(loop-value)
+		{_i}.setItemMeta({_m})
+		return {_i}
+		
+expression color of banner %item%:
+	get:
+		return DyeColor.valueOf(expr-1.getType().toString().split("_")[0])
+		
+plural expression pattern[s] of banner %item%:
+	get:
+		return ...expr-1.getItemMeta().getPatterns()
